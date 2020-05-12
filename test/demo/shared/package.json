@@ -1,0 +1,18 @@
+{
+  "name": "@mobiuspace/shared",
+  "version": "0.0.5",
+  "author": "jaskang",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/shared.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "msbuild": "msbuild build"
+  }
+}
