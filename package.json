@@ -16,7 +16,9 @@
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
-    "commit": "git cz"
+    "prepublishOnly": "tsc",
+    "commit": "git cz",
+    "release": "np"
   },
   "husky": {
     "hooks": {
@@ -70,20 +72,21 @@
     "tslib": "^1.11.2"
   },
   "devDependencies": {
-    "@types/rimraf": "^3.0.0",
-    "@types/jest": "^25.2.1",
-    "@types/node": "^13.13.0",
-    "eslint": "^6.8.0",
-    "jest": "^25.3.0",
-    "prettier": "^2.0.4",
-    "ts-jest": "^25.4.0",
-    "typescript": "^3.8.3",
-    "commitizen": "^4.1.2",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.0",
+    "@types/rimraf": "^3.0.0",
+    "commitizen": "^4.1.2",
     "conventional-changelog-cli": "^2.0.34",
     "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^6.8.0",
     "husky": "^4.2.5",
-    "lint-staged": "^10.2.2"
+    "jest": "^25.3.0",
+    "lint-staged": "^10.2.2",
+    "np": "^6.2.3",
+    "prettier": "^2.0.4",
+    "ts-jest": "^25.4.0",
+    "typescript": "^3.8.3"
   }
 }
