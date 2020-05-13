@@ -8,7 +8,7 @@ import inject from '@rollup/plugin-inject'
 // import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
-import typescript, { RollupTypescriptOptions } from '@rollup/plugin-typescript'
+import typescript, { RPT2Options } from 'rollup-plugin-typescript2'
 import json from '@rollup/plugin-json'
 
 import autoprefixer from 'autoprefixer'
@@ -53,28 +53,35 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs']
   }
 
-  const typescriptOptions: RollupTypescriptOptions = {
-    typescript: require('typescript'),
-    tsconfig: false,
-    module: 'esnext',
-    lib: ['dom', 'esnext'],
-    importHelpers: true,
-    sourceMap: true,
-    rootDir: './src',
-    strict: true,
-    noImplicitAny: true,
-    strictNullChecks: true,
-    strictFunctionTypes: true,
-    strictPropertyInitialization: true,
-    noImplicitThis: true,
-    alwaysStrict: true,
-    noUnusedLocals: true,
-    noUnusedParameters: true,
-    noImplicitReturns: true,
-    noFallthroughCasesInSwitch: true,
-    moduleResolution: 'node',
-    jsx: 'react',
-    include: ['src']
+  const typescriptOptions: RPT2Options = {
+    typescript: ts,
+    // tsconfig: options.tsconfig,
+    tsconfigDefaults: {
+      exclude: [
+        '**/*.spec.ts',
+        '**/*.test.ts',
+        '**/*.spec.tsx',
+        '**/*.test.tsx',
+        'node_modules',
+        'bower_components',
+        'jspm_packages',
+        options.output
+      ],
+      compilerOptions: {
+        sourceMap: true,
+        declaration: true,
+        jsx: 'react'
+      }
+    },
+    tsconfigOverride: {
+      compilerOptions: {
+        target: 'esnext',
+        // don't output declarations more than once
+        ...(options > 0 ? { declaration: false, declarationMap: false } : {})
+      }
+    },
+    check: !opts.transpileOnly,
+    useTsconfigDeclarationDir: Boolean(tsCompilerOptions?.declarationDir)
   }
   if (type === 'cjs') {
     typescriptOptions.declaration = true

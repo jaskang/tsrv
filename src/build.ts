@@ -15,7 +15,7 @@ export async function build(shellOptions: BuildOptionsType) {
   rimraf.sync(join(options.cwd, options.output))
   await execRollup('cjs', options)
   console.log(chalk.green(`cjs build success!`))
-  await execRollup('esm', options)
-  console.log(chalk.green(`esm build success!`))
+  // await execRollup('esm', options)
+  // console.log(chalk.green(`esm build success!`))
   // await buildTypes({ cwd: config.cwd })
 }
