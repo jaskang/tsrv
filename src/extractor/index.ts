@@ -2,9 +2,10 @@ import path from 'path'
 import fs from 'fs-extra'
 import chalk from 'chalk'
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
+import { TsrvOptions } from '../options'
 
-async function buildTypes({ cwd }) {
-  const extractorConfigPath = path.resolve(cwd, `api-extractor.json`)
+async function buildTypes({ cwd, output }: TsrvOptions) {
+  const extractorConfigPath = path.join(cwd, 'api-extractor.json')
   await fs.writeJSON(extractorConfigPath, {
     $schema: 'https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json',
     mainEntryPointFilePath: '<projectFolder>/dist/types/index.d.ts',
@@ -51,7 +52,7 @@ async function buildTypes({ cwd }) {
     showVerboseMessages: true
   })
   await fs.remove(extractorConfigPath)
-  await fs.remove(path.resolve(cwd, 'dist', 'types'))
+  await fs.remove(path.join(cwd, output, 'types'))
   if (extractorResult.succeeded) {
     console.log(chalk.bold(chalk.green(`API Extractor completed successfully.`)))
   } else {

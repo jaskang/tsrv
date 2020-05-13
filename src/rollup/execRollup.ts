@@ -13,10 +13,10 @@ import json from '@rollup/plugin-json'
 
 import autoprefixer from 'autoprefixer'
 
-import { UserConfig } from './loadConfig'
+import { TsrvOptions } from '../options'
 import { join } from 'path'
 
-function getConfig(type: 'cjs' | 'esm', userConfig: UserConfig) {
+function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
   // cjs 不给浏览器用，所以无需 runtimeHelpers
   const babelHelpers = type === 'cjs' ? 'bundled' : 'runtime'
   const babelOptions = {
@@ -54,6 +54,7 @@ function getConfig(type: 'cjs' | 'esm', userConfig: UserConfig) {
   }
 
   const typescriptOptions: RollupTypescriptOptions = {
+    typescript: require('typescript'),
     tsconfig: false,
     module: 'esnext',
     lib: ['dom', 'esnext'],
@@ -73,16 +74,16 @@ function getConfig(type: 'cjs' | 'esm', userConfig: UserConfig) {
     noFallthroughCasesInSwitch: true,
     moduleResolution: 'node',
     jsx: 'react',
-    declaration: false
+    include: ['src']
   }
   if (type === 'cjs') {
     typescriptOptions.declaration = true
-    typescriptOptions.declarationDir = join(userConfig.cwd, 'dist', 'types')
+    typescriptOptions.declarationDir = './dist/types'
   }
   const testExternal = id => {
     const external = [
-      ...Object.keys(userConfig.pkg.dependencies || {}),
-      ...Object.keys(userConfig.pkg.peerDependencies || {})
+      ...Object.keys(options.pkg.dependencies || {}),
+      ...Object.keys(options.pkg.peerDependencies || {})
     ]
     const excludes = []
     const externalRE = new RegExp(`^(${external.join('|')})($|/)`)
@@ -118,7 +119,7 @@ function getConfig(type: 'cjs' | 'esm', userConfig: UserConfig) {
         ]
       ]
     }),
-    inject({}),
+    // inject({}),
     replace({}),
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
@@ -132,26 +133,26 @@ function getConfig(type: 'cjs' | 'esm', userConfig: UserConfig) {
     json()
   ]
   return {
-    input: join(userConfig.cwd, 'src/index.ts'),
+    input: join(options.cwd, 'src/index.ts'),
     output:
       type === 'cjs'
         ? {
             format: type,
             sourcemap: true,
-            dir: join(userConfig.cwd, 'dist')
+            dir: join(options.cwd, 'dist')
           }
         : {
             format: type,
             sourcemap: true,
-            file: join(userConfig.cwd, `dist/index.esm.js`)
+            file: join(options.cwd, `dist/index.esm.js`)
           },
     plugins,
     external: testExternal
   }
 }
 
-async function execRollup(type: 'cjs' | 'esm', userConfig: UserConfig) {
-  const { output, ...input } = getConfig(type, userConfig)
+export async function execRollup(type: 'cjs' | 'esm', config: TsrvOptions) {
+  const { output, ...input } = getConfig(type, config)
   const bundle = await rollup(input)
   await bundle.write(output)
 }

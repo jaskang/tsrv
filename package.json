@@ -4,6 +4,22 @@
   "main": "dist/index.js",
   "author": "jaskang",
   "license": "MIT",
+  "description": "Zero-config TypeScript package development",
+  "homepage": "https://github.com/jaskang/tsrv",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaskang/tsrv.git"
+  },
+  "keywords": [
+    "vue",
+    "react",
+    "typescript",
+    "bundle",
+    "rollup"
+  ],
+  "bugs": {
+    "url": "https://github.com/jaskang/tsrv/issues"
+  },
   "bin": {
     "tsrv": "dist/bin/cli.js"
   },
@@ -16,6 +32,7 @@
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
+    "test": "jest",
     "prepublishOnly": "tsc",
     "commit": "git cz",
     "release": "np"
@@ -67,6 +84,7 @@
     "fs-extra": "^9.0.0",
     "minimist": "^1.2.5",
     "ora": "^4.0.4",
+    "require-from-string": "^2.0.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.9.1",
     "rollup-plugin-postcss": "^3.1.1",
@@ -75,9 +93,11 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
+    "@types/fs-extra": "^8.1.0",
     "@types/jest": "^25.2.1",
     "@types/node": "^13.13.0",
     "@types/rimraf": "^3.0.0",
+    "@types/shelljs": "^0.8.7",
     "commitizen": "^4.1.2",
     "conventional-changelog-cli": "^2.0.34",
     "cz-conventional-changelog": "^3.2.0",
@@ -87,6 +107,7 @@
     "lint-staged": "^10.2.2",
     "np": "^6.2.3",
     "prettier": "^2.0.4",
+    "shelljs": "^0.8.4",
     "ts-jest": "^25.4.0",
     "typescript": "^3.8.3"
   }
