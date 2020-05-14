@@ -17,9 +17,10 @@ describe('tsdx build :: zero-config defaults', () => {
 
   it('should compile files into a dist directory', () => {
     const output = execWithCache('node ../dist/bin/cli.js build')
-    expect(shell.test('-f', 'dist/index.js')).toBeTruthy()
-    expect(shell.test('-f', 'dist/index.esm.js')).toBeTruthy()
-    expect(shell.test('-f', 'dist/index.d.ts')).toBeTruthy()
+    expect(shell.test('-f', `dist/${fixtureName}.esm.development.js`)).toBeTruthy()
+    expect(shell.test('-f', `dist/${fixtureName}.esm.production.js`)).toBeTruthy()
+    expect(shell.test('-f', `dist/${fixtureName}.cjs.development.js`)).toBeTruthy()
+    expect(shell.test('-f', `dist/${fixtureName}.cjs.production.js`)).toBeTruthy()
     expect(output.code).toBe(0)
   })
 

@@ -120,10 +120,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
         ]
       ]
     }),
-    // inject({}),
-    // replace({
-    //   'process.env.NODE_ENV': JSON.stringify(env)
-    // }),
+
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       browser: true,
@@ -133,6 +130,10 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
 
     typescript(typescriptOptions),
     babel(babelOptions),
+    // inject({}),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(env)
+    }),
     json()
   ]
   return {
