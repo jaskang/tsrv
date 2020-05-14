@@ -3,6 +3,7 @@ import chalk from 'chalk'
 import { join } from 'path'
 import rimraf from 'rimraf'
 import execRollup from './rollup/execRollup'
+import buildTypes from './extractor'
 
 interface BuildOptionsType {
   cwd: string
@@ -20,5 +21,5 @@ export async function build(shellOptions: BuildOptionsType) {
   }
   // await execRollup('esm', options)
   // console.log(chalk.green(`esm build success!`))
-  // await buildTypes({ cwd: config.cwd })
+  await buildTypes(options[0])
 }

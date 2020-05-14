@@ -8,17 +8,17 @@ async function buildTypes({ cwd, outDir }: TsrvOptions) {
   const extractorConfigPath = path.join(cwd, 'api-extractor.json')
   await fs.writeJSON(extractorConfigPath, {
     $schema: 'https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json',
-    mainEntryPointFilePath: '<projectFolder>/dist/types/index.d.ts',
+    mainEntryPointFilePath: `<projectFolder>/${outDir}/__types__/index.d.ts`,
     apiReport: {
       enabled: false
     },
     docModel: {
       enabled: false,
-      apiJsonFilePath: '<projectFolder>/dist/index.api.json'
+      apiJsonFilePath: `<projectFolder>/${outDir}/index.api.json`
     },
     dtsRollup: {
       enabled: true,
-      untrimmedFilePath: '<projectFolder>/dist/index.d.ts'
+      untrimmedFilePath: `<projectFolder>/${outDir}/index.d.ts`
     },
     tsdocMetadata: {
       enabled: false
@@ -52,7 +52,7 @@ async function buildTypes({ cwd, outDir }: TsrvOptions) {
     showVerboseMessages: true
   })
   await fs.remove(extractorConfigPath)
-  await fs.remove(path.join(cwd, outDir, 'types'))
+  await fs.remove(path.join(cwd, outDir, '__types__'))
   if (extractorResult.succeeded) {
     console.log(chalk.bold(chalk.green(`API Extractor completed successfully.`)))
   } else {

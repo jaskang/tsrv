@@ -25,6 +25,6 @@ describe('tsdx build :: zero-config defaults', () => {
   })
 
   afterAll(() => {
-    teardownStage(stageName)
+    // teardownStage(stageName)
   })
 })

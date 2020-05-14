@@ -55,7 +55,6 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
 
   const typescriptOptions: RPT2Options = {
     typescript: ts,
-    tsconfig: 'tsconfig.json',
     tsconfigDefaults: {
       exclude: [
         '**/*.spec.ts',
@@ -76,12 +75,13 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
     tsconfigOverride: {
       compilerOptions: {
         target: 'ESNext',
+        declarationDir: `${outDir}/__types__`,
         // don't output declarations more than once
         ...(declaration ? {} : { declaration: false, declarationMap: false })
       }
     },
     check: true,
-    useTsconfigDeclarationDir: Boolean(tsconfig?.compilerOptions?.declarationDir)
+    useTsconfigDeclarationDir: true
   }
 
   const testExternal = id => {
