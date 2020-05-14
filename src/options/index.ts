@@ -2,9 +2,10 @@ import path from 'path'
 import fs from 'fs-extra'
 import { transform } from '@babel/core'
 import requireFromString from 'require-from-string'
-import camelCase from 'camelcase'
 import { OutputOptions } from 'rollup'
 import { safePackageName, safeVariableName } from '../utils'
+import { CompilerOptions } from 'typescript'
+import chalk from 'chalk'
 
 type formatType = 'cjs' | 'esm' | 'umd'
 
@@ -16,9 +17,12 @@ export interface TsrvConfig {
 
 export interface TsrvOptions {
   cwd: string
+  outDir: string
+  env: 'development' | 'production'
   format: formatType
   pkg: any
-  tsconfig: any
+  declaration: boolean
+  tsconfig: { compilerOptions?: CompilerOptions }
   output: OutputOptions
 }
 
@@ -62,18 +66,26 @@ function loadTsrvConfig(cwd): TsrvConfig {
 
 export function loadOptions(cwd: string): TsrvOptions[] {
   const userConfig = loadTsrvConfig(cwd)
-  const tsconfig = fs.readJsonSync(path.join(cwd, 'tsconfig.json')) || {}
-  const pkg = fs.readJSONSync(path.join(cwd, 'package.json')) || null
-  return userConfig.formats.map(type => {
-    const outputName = [`${userConfig.outDir}/${safePackageName(pkg.name)}`, type, 'js'].filter(Boolean).join('.')
-    return {
+  const tsconfigPath = path.join(cwd, 'tsconfig.json')
+  const tsconfig = fs.existsSync(tsconfigPath) ? fs.readJsonSync(tsconfigPath) : {}
+
+  const pkgPath = path.join(cwd, 'package.json')
+  if (!fs.existsSync(pkgPath)) {
+    console.error(chalk.red(`未找到: "${pkgPath}" 文件`))
+    process.exit()
+  }
+  const pkg = fs.readJSONSync(pkgPath)
+  return userConfig.formats.reduce((prev, type, index) => {
+    const optionDev: TsrvOptions = {
       cwd,
       format: type,
       outDir: userConfig.outDir,
+      env: 'development',
       pkg: pkg,
       tsconfig,
+      declaration: userConfig.formats.length - index <= 1,
       output: {
-        file: outputName,
+        file: `${userConfig.outDir}/${safePackageName(pkg.name)}.${type}.development.js`,
         // Pass through the file format
         format: type,
         // Do not let Rollup call Object.freeze() on namespace import objects
@@ -87,5 +99,15 @@ export function loadOptions(cwd: string): TsrvOptions[] {
         exports: 'named'
       }
     }
-  })
+
+    const optionProd: TsrvOptions = {
+      ...optionDev,
+      env: 'production',
+      declaration: false,
+      output: { ...optionDev.output, file: `${userConfig.outDir}/${safePackageName(pkg.name)}.${type}.production.js` }
+    }
+
+    prev.push(optionDev, optionProd)
+    return prev
+  }, [] as TsrvOptions[])
 }

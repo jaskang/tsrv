@@ -1,3 +1,3 @@
 export default {
-  format: ['cjs']
+  format: ['cjs', 'esm']
 }

@@ -16,16 +16,16 @@ import autoprefixer from 'autoprefixer'
 import { TsrvOptions } from '../options'
 import { join } from 'path'
 
-function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
+function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: TsrvOptions) {
   // cjs 不给浏览器用，所以无需 runtimeHelpers
-  const babelHelpers = type === 'cjs' ? 'bundled' : 'runtime'
+  const babelHelpers = output.format === 'cjs' ? 'bundled' : 'runtime'
   const babelOptions = {
     presets: [
       ['@babel/preset-typescript'],
       [
         '@babel/preset-env',
         {
-          modules: type === 'esm' ? false : 'auto',
+          modules: output.format === 'esm' ? false : 'auto',
           loose: true,
           targets: { browsers: ['last 2 versions', 'IE 11'] },
           exclude: ['transform-async-to-generator', 'transform-regenerator']
@@ -43,7 +43,7 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       ['@babel/plugin-proposal-class-properties', { loose: true }],
       ...(babelHelpers === 'runtime'
-        ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: type === 'esm' }]]
+        ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: output.format === 'esm' }]]
         : []),
       ...(process.env.COVERAGE ? [require.resolve('babel-plugin-istanbul')] : [])
     ],
@@ -55,7 +55,7 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
 
   const typescriptOptions: RPT2Options = {
     typescript: ts,
-    // tsconfig: options.tsconfig,
+    tsconfig: 'tsconfig.json',
     tsconfigDefaults: {
       exclude: [
         '**/*.spec.ts',
@@ -65,7 +65,7 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
         'node_modules',
         'bower_components',
         'jspm_packages',
-        options.output
+        outDir
       ],
       compilerOptions: {
         sourceMap: true,
@@ -75,23 +75,17 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
     },
     tsconfigOverride: {
       compilerOptions: {
-        target: 'esnext',
+        target: 'ESNext',
         // don't output declarations more than once
-        ...(options > 0 ? { declaration: false, declarationMap: false } : {})
+        ...(declaration ? {} : { declaration: false, declarationMap: false })
       }
     },
-    check: !opts.transpileOnly,
-    useTsconfigDeclarationDir: Boolean(tsCompilerOptions?.declarationDir)
+    check: true,
+    useTsconfigDeclarationDir: Boolean(tsconfig?.compilerOptions?.declarationDir)
   }
-  if (type === 'cjs') {
-    typescriptOptions.declaration = true
-    typescriptOptions.declarationDir = './dist/types'
-  }
+
   const testExternal = id => {
-    const external = [
-      ...Object.keys(options.pkg.dependencies || {}),
-      ...Object.keys(options.pkg.peerDependencies || {})
-    ]
+    const external = [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})]
     const excludes = []
     const externalRE = new RegExp(`^(${external.join('|')})($|/)`)
     if (external.length === 0) {
@@ -127,7 +121,9 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
       ]
     }),
     // inject({}),
-    replace({}),
+    // replace({
+    //   'process.env.NODE_ENV': JSON.stringify(env)
+    // }),
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       browser: true,
@@ -140,28 +136,21 @@ function getConfig(type: 'cjs' | 'esm', options: TsrvOptions) {
     json()
   ]
   return {
-    input: join(options.cwd, 'src/index.ts'),
-    output:
-      type === 'cjs'
-        ? {
-            format: type,
-            sourcemap: true,
-            dir: join(options.cwd, 'dist')
-          }
-        : {
-            format: type,
-            sourcemap: true,
-            file: join(options.cwd, `dist/index.esm.js`)
-          },
+    input: join(cwd, 'src/index.ts'),
+    output: output,
     plugins,
     external: testExternal
   }
 }
 
-export async function execRollup(type: 'cjs' | 'esm', config: TsrvOptions) {
-  const { output, ...input } = getConfig(type, config)
-  const bundle = await rollup(input)
-  await bundle.write(output)
+export async function execRollup(options: TsrvOptions) {
+  try {
+    const { output, ...input } = getConfig(options)
+    const bundle = await rollup(input)
+    await bundle.write(output)
+  } catch (error) {
+    throw error
+  }
 }
 
 export default execRollup

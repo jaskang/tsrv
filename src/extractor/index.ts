@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 import { TsrvOptions } from '../options'
 
-async function buildTypes({ cwd, output }: TsrvOptions) {
+async function buildTypes({ cwd, outDir }: TsrvOptions) {
   const extractorConfigPath = path.join(cwd, 'api-extractor.json')
   await fs.writeJSON(extractorConfigPath, {
     $schema: 'https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json',
@@ -52,7 +52,7 @@ async function buildTypes({ cwd, output }: TsrvOptions) {
     showVerboseMessages: true
   })
   await fs.remove(extractorConfigPath)
-  await fs.remove(path.join(cwd, output, 'types'))
+  await fs.remove(path.join(cwd, outDir, 'types'))
   if (extractorResult.succeeded) {
     console.log(chalk.bold(chalk.green(`API Extractor completed successfully.`)))
   } else {
