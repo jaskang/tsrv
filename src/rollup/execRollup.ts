@@ -1,6 +1,7 @@
 import { ModuleFormat, rollup, watch } from 'rollup'
 import ts from 'typescript'
 import babel from '@rollup/plugin-babel'
+import babelPresetTsrv from './babel-preset-tsrv'
 import url from '@rollup/plugin-url'
 import image from '@rollup/plugin-image'
 import postcss from 'rollup-plugin-postcss'
@@ -17,42 +18,6 @@ import { TsrvOptions } from '../options'
 import { join } from 'path'
 
 function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: TsrvOptions) {
-  // cjs 不给浏览器用，所以无需 runtimeHelpers
-  const babelHelpers = output.format === 'cjs' ? 'bundled' : 'runtime'
-  const babelOptions = {
-    presets: [
-      ['@babel/preset-typescript'],
-      [
-        '@babel/preset-env',
-        {
-          modules: output.format === 'esm' ? false : 'auto',
-          loose: true,
-          targets: { browsers: ['last 2 versions', 'IE 11'] },
-          exclude: ['transform-async-to-generator', 'transform-regenerator']
-        }
-      ],
-      ['@babel/preset-react']
-    ],
-    plugins: [
-      '@babel/plugin-syntax-dynamic-import',
-      '@babel/plugin-proposal-export-default-from',
-      '@babel/plugin-proposal-export-namespace-from',
-      '@babel/plugin-proposal-do-expressions',
-      '@babel/plugin-proposal-nullish-coalescing-operator',
-      '@babel/plugin-proposal-optional-chaining',
-      ['@babel/plugin-proposal-decorators', { legacy: true }],
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
-      ...(babelHelpers === 'runtime'
-        ? [[require.resolve('@babel/plugin-transform-runtime'), { useESModules: output.format === 'esm' }]]
-        : []),
-      ...(process.env.COVERAGE ? [require.resolve('babel-plugin-istanbul')] : [])
-    ],
-    exclude: /\/node_modules\//,
-    babelrc: false,
-    babelHelpers,
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs']
-  }
-
   const typescriptOptions: RPT2Options = {
     typescript: ts,
     tsconfigDefaults: {
@@ -127,9 +92,15 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
       extensions: ['.mjs', '.js', '.jsx', '.json', '.node'],
       preferBuiltins: true
     }),
-
     typescript(typescriptOptions),
-    babel(babelOptions),
+    babel({
+      exclude: /\/node_modules\//,
+      babelrc: false,
+      babelHelpers: 'runtime',
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs'],
+      presets: [babelPresetTsrv]
+    }),
+
     // inject({}),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env)

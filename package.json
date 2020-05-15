@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.9.6",
+    "@babel/helper-plugin-utils": "^7.8.3",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@babel/plugin-proposal-do-expressions": "^7.8.3",
@@ -79,6 +80,7 @@
     "@rollup/plugin-url": "^5.0.0",
     "autoprefixer": "^9.7.6",
     "babel-plugin-istanbul": "^6.0.0",
+    "babel-plugin-transform-async-to-promises": "^0.8.15",
     "camelcase": "^6.0.0",
     "chalk": "^4.0.0",
     "commander": "^5.1.0",
