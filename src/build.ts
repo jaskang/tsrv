@@ -21,5 +21,5 @@ export async function build(shellOptions: BuildOptionsType) {
   }
   // await execRollup('esm', options)
   // console.log(chalk.green(`esm build success!`))
-  await buildTypes(options[0])
+  // await buildTypes(options[0])
 }

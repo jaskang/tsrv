@@ -2,6 +2,7 @@ module.exports = {
   testEnvironment: 'node',
   preset: 'ts-jest',
   testMatch: ['<rootDir>/**/*(*.)@(test).[tj]s?(x)'],
+  moduleFileExtensions: ['ts', 'js', 'vue', 'json'],
   testPathIgnorePatterns: [
     '/node_modules/', // default
     '<rootDir>/templates/',

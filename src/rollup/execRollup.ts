@@ -5,7 +5,8 @@ import babelPresetTsrv from './babel-preset-tsrv'
 import url from '@rollup/plugin-url'
 import image from '@rollup/plugin-image'
 import postcss from 'rollup-plugin-postcss'
-import inject from '@rollup/plugin-inject'
+// import inject from '@rollup/plugin-inject'
+import vuePlugin from 'rollup-plugin-vue'
 // import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
@@ -66,32 +67,38 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
   }
 
   const plugins = [
+    vuePlugin({
+      exclude: /\/node_modules\//,
+      target: 'browser',
+      exposeFilename: true,
+      preprocessStyles: true,
+      cssModulesOptions: {
+        localsConvention: 'camelCase'
+      }
+    }),
     url(),
     image(),
+
     postcss({
-      extract: false,
       plugins: [autoprefixer()],
-      inject: true,
-      autoModules: true,
       modules: {
+        generateScopedName: '[local]___[hash:base64:5]',
         localsConvention: 'camelCase'
       },
-      use: [
-        [
-          'less',
-          {
-            javascriptEnabled: true
-          }
-        ]
-      ]
+      include: /&module=.*\.css$/
     }),
-
+    postcss({
+      plugins: [autoprefixer()],
+      include: /(?<!&module=.*)\.css$/
+    }),
+    // postcss({ include: /(?<!&module=.*)\.css$/ }),
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       browser: true,
-      extensions: ['.mjs', '.js', '.jsx', '.json', '.node'],
+      extensions: ['.mjs', '.js', '.jsx', '.json', '.vue'],
       preferBuiltins: true
     }),
+
     typescript(typescriptOptions),
     babel({
       exclude: /\/node_modules\//,
