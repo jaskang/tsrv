@@ -2,10 +2,10 @@
   <div class="scoped"></div>
 </template>
 
-<script>
+<script lang="ts">
 import styles from './styles/scoped.module.less'
-
-export default {
+import { defineComponent } from 'vue'
+export default defineComponent({
   name: 'scoped',
   setup() {
     console.log(styles.text)
@@ -13,7 +13,7 @@ export default {
       test: styles?.test
     }
   }
-}
+})
 </script>
 
 <style lang="less" scoped>

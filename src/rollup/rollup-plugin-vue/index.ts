@@ -365,7 +365,6 @@ function getScriptCode(descriptor: SFCDescriptor, resourcePath: string) {
   let scriptImport = `const script = {}`
   if (descriptor.script) {
     const src = descriptor.script.src || resourcePath
-    console.log(descriptor.script.attrs)
 
     const attrsQuery = attrsToQuery(descriptor.script.attrs, 'js')
     const srcQuery = descriptor.script.src ? `&src` : ``
