@@ -20,7 +20,7 @@ export default declare((api, options) => {
         }
       ],
       [require('@babel/preset-react')],
-      [require('@babel/preset-typescript')]
+      [require('@babel/preset-typescript'), { allExtensions: true }]
     ],
     plugins: [
       require('@babel/plugin-syntax-dynamic-import'),

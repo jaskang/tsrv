@@ -109,7 +109,17 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
       exclude: /\/node_modules\//,
       babelrc: false,
       babelHelpers: 'runtime',
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs'],
+      extensions: [
+        '.js',
+        '.jsx',
+        '.ts',
+        '.tsx',
+        '.es6',
+        '.es',
+        '.mjs',
+        '.vue?vue&type=script&lang=ts',
+        '.vue?vue&type=script&lang=js'
+      ],
       presets: [babelPresetTsrv]
     }),
 
