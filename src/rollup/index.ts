@@ -6,14 +6,14 @@ import url from '@rollup/plugin-url'
 import image from '@rollup/plugin-image'
 import postcss from 'rollup-plugin-postcss'
 // import inject from '@rollup/plugin-inject'
-import vuePlugin from 'rollup-plugin-vue'
+// import vuePlugin from 'rollup-plugin-vue'
+import vuePlugin from './rollup-plugin-vue'
 // import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript, { RPT2Options } from 'rollup-plugin-typescript2'
 import json from '@rollup/plugin-json'
 
-import execa from 'execa'
 import autoprefixer from 'autoprefixer'
 
 import { TsrvOptions } from '../options'
@@ -109,17 +109,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
       exclude: /\/node_modules\//,
       babelrc: false,
       babelHelpers: 'runtime',
-      extensions: [
-        '.js',
-        '.jsx',
-        '.ts',
-        '.tsx',
-        '.es6',
-        '.es',
-        '.mjs',
-        '.vue?vue&type=script&lang=ts',
-        '.vue?vue&type=script&lang=js'
-      ],
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.es6', '.es', '.mjs'],
       presets: [babelPresetTsrv]
     }),
 
