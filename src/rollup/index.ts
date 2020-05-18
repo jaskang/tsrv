@@ -100,7 +100,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       browser: true,
-      extensions: ['.mjs', '.js', '.jsx', '.json', '.vue'],
+      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.vue'],
       preferBuiltins: true
     }),
 
