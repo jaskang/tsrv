@@ -1,4 +1,4 @@
-import { ModuleFormat, rollup, watch } from 'rollup'
+import { ModuleFormat, rollup, watch, WatcherOptions } from 'rollup'
 import ts from 'typescript'
 import babel from '@rollup/plugin-babel'
 import babelPresetTsrv from './babel-preset-tsrv'
@@ -13,10 +13,14 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript, { RPT2Options } from 'rollup-plugin-typescript2'
 import json from '@rollup/plugin-json'
 
+import execa from 'execa'
 import autoprefixer from 'autoprefixer'
 
 import { TsrvOptions } from '../options'
 import { join } from 'path'
+import ora from 'ora'
+import chalk from 'chalk'
+import { logError } from '../utils/error'
 
 function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: TsrvOptions) {
   const typescriptOptions: RPT2Options = {
@@ -132,4 +136,30 @@ export async function execRollup(options: TsrvOptions) {
   }
 }
 
-export default execRollup
+export async function watchRollup(optionsGroup: TsrvOptions[]) {
+  const wathcOptions = optionsGroup.map(options => {
+    const config = getConfig(options)
+    return {
+      ...config,
+      watch: {
+        silent: true,
+        include: ['src/**'],
+        exclude: ['node_modules/**']
+      } as WatcherOptions
+    }
+  })
+  const spinner = ora().start()
+  watch(wathcOptions).on('event', async event => {
+    if (event.code === 'START') {
+      spinner.start(chalk.bold.cyan('Compiling modules...'))
+    }
+    if (event.code === 'ERROR') {
+      spinner.fail(chalk.bold.red('Failed to compile'))
+      logError(event.error)
+    }
+    if (event.code === 'END') {
+      spinner.succeed(chalk.bold.green('Compiled successfully'))
+      console.log(`${chalk.dim('Watching for changes')}`)
+    }
+  })
+}
