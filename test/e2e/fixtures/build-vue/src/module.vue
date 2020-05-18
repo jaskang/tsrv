@@ -2,6 +2,8 @@
   <div :class="$style.module"></div>
 </template>
 <script lang="typescript">
+import './styles/scoped.less'
+
 export default {
 name: 'module'
 }

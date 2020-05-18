@@ -89,11 +89,12 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
         generateScopedName: '[local]___[hash:base64:5]',
         localsConvention: 'camelCase'
       },
-      include: /&module=.*\.css$/
+      include: /&module=.*\.(css|less|scss)$/
     }),
     postcss({
       plugins: [autoprefixer()],
-      include: /(?<!&module=.*)\.css$/
+      autoModules: true,
+      include: /(?<!&module=.*)\.(css|less|scss)$/
     }),
     // postcss({ include: /(?<!&module=.*)\.css$/ }),
     nodeResolve({

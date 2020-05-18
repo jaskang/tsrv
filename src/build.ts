@@ -4,7 +4,7 @@ import { join } from 'path'
 import rimraf from 'rimraf'
 
 import buildTypes from './extractor'
-import { execRollup, watchRollup } from './rollup/execRollup'
+import { execRollup, watchRollup } from './rollup'
 
 interface BuildOptionsType {
   cwd: string
