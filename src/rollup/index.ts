@@ -82,7 +82,6 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
     }),
     url(),
     image(),
-
     postcss({
       plugins: [autoprefixer()],
       modules: {
@@ -100,10 +99,9 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       browser: true,
-      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.vue'],
+      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
       preferBuiltins: true
     }),
-
     typescript(typescriptOptions),
     babel({
       exclude: /\/node_modules\//,
@@ -144,7 +142,7 @@ export async function watchRollup(optionsGroup: TsrvOptions[]) {
       ...config,
       watch: {
         silent: true,
-        include: ['src/**'],
+        include: ['src/**/*'],
         exclude: ['node_modules/**']
       } as WatcherOptions
     }

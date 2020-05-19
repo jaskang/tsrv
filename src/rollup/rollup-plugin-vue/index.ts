@@ -437,6 +437,7 @@ function attrsToQuery(attrs: SFCBlock['attrs'], langFallback?: string, forceLang
     }
   }
   if (langFallback) {
+    // query += `lang` in attrs ? (forceLangFallback ? `.${langFallback}` : ``) : `&lang.${langFallback}`
     query += `lang` in attrs ? (forceLangFallback ? `.${langFallback}` : `.${attrs['lang']}`) : `&lang.${langFallback}`
   }
   return query
