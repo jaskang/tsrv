@@ -68,6 +68,7 @@ export default function PluginVue(userOptions: Partial<Options> = {}): Plugin {
 
       if (query.vue) {
         if (query.src) {
+          debug(`resolveId-src(${id})`)
           id = resolve(dirname(importer!), id)
           // map src request to the importer vue file descriptor
           const [filename] = id.split('?', 2)
@@ -81,10 +82,12 @@ export default function PluginVue(userOptions: Partial<Options> = {}): Plugin {
 
     load(id) {
       const query = parseVuePartRequest(id)
+      debug(`load-query(${id})`)
       if (query.vue) {
         if (query.src) {
           return fs.readFileSync(query.filename, 'utf-8')
         }
+        debug(`load-vue(${query.filename})`)
         const descriptor = getDescriptor(query.filename)
         if (descriptor) {
           const block =
@@ -97,7 +100,6 @@ export default function PluginVue(userOptions: Partial<Options> = {}): Plugin {
               : query.type === 'custom'
               ? descriptor.customBlocks[query.index]
               : null
-
           if (block) {
             return {
               code: block.content,
@@ -217,6 +219,13 @@ export default function PluginVue(userOptions: Partial<Options> = {}): Plugin {
         return null
       }
     }
+    // watchChange(id) {
+    //   debug(`watchChange(${id})`)
+    //   const query = parseVuePartRequest(id)
+    //   if (query.filename.endsWith('.vue')) {
+    //     parseSFC(fs.readFileSync(query.filename, 'utf-8'), id, rootContext)
+    //   }
+    // }
   }
 }
 
@@ -279,6 +288,11 @@ function parseVuePartRequest(id: string): Query {
 
 const cache = new Map<string, SFCDescriptor>()
 
+function removeDescriptor(id: string) {
+  if (cache.has(id)) {
+    return cache.delete(id)!
+  }
+}
 function getDescriptor(id: string) {
   if (cache.has(id)) {
     return cache.get(id)!
@@ -293,7 +307,7 @@ function parseSFC(
   sourceRoot: string
 ): { descriptor: SFCDescriptor; errors: CompilerError[] } {
   const { descriptor, errors } = parse(code, {
-    sourceMap: true,
+    sourceMap: process.env.ROLLUP_WATCH === 'true',
     filename: id,
     sourceRoot: sourceRoot,
     pad: 'line'

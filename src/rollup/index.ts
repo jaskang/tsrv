@@ -121,12 +121,17 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
     input: join(cwd, 'src/index.ts'),
     output: output,
     plugins,
+    onwarn(warning, warn) {
+      if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
+      warn(warning)
+    },
     external: testExternal
   }
 }
 
 export async function execRollup(options: TsrvOptions) {
   try {
+    process.env.ROLLUP_WATCH = 'true'
     const { output, ...input } = getConfig(options)
     const bundle = await rollup(input)
     await bundle.write(output)
@@ -136,6 +141,7 @@ export async function execRollup(options: TsrvOptions) {
 }
 
 export async function watchRollup(optionsGroup: TsrvOptions[]) {
+  process.env.ROLLUP_WATCH = 'false'
   const wathcOptions = optionsGroup.map(options => {
     const config = getConfig(options)
     return {
