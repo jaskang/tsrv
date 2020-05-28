@@ -10,7 +10,7 @@ import chalk from 'chalk'
 type formatType = 'cjs' | 'esm' | 'umd'
 
 export interface TsrvConfig {
-  formats: Array<formatType>
+  formats: formatType[]
   outDir: string
   globals: { [name: string]: string }
 }
@@ -27,7 +27,7 @@ export interface TsrvOptions {
 }
 
 const defaultTsrvConfig: TsrvConfig = {
-  formats: ['cjs', 'esm'],
+  formats: ['esm'],
   outDir: 'dist',
   globals: { react: 'React', 'react-native': 'ReactNative' }
 }
@@ -60,7 +60,8 @@ function loadTsrvConfig(cwd): TsrvConfig {
   }
   return {
     ...defaultTsrvConfig,
-    ...userConfig
+    ...userConfig,
+    formats: ['esm']
   } as TsrvConfig
 }
 
