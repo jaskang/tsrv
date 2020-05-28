@@ -5,7 +5,7 @@ describe('loadUserConfig', () => {
   it('load tsrv.config.ts', () => {
     const options = loadOptions(path.join(__dirname, '../e2e/fixtures/build-default'))
     expect(options[0]).toMatchObject({
-      format: 'cjs'
+      format: 'esm'
     })
   })
 })
