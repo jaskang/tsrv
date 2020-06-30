@@ -19,10 +19,10 @@ export default declare((api, options) => {
           exclude: ['transform-regenerator', 'transform-async-to-generator', 'proposal-object-rest-spread']
         }
       ],
-      [require('@babel/preset-react')],
       [require('@babel/preset-typescript'), { allExtensions: true }]
     ],
     plugins: [
+      [require('@ant-design-vue/babel-plugin-jsx'), { transformOn: true }],
       require('@babel/plugin-syntax-dynamic-import'),
       require('@babel/plugin-proposal-export-default-from'),
       require('@babel/plugin-proposal-export-namespace-from'),
