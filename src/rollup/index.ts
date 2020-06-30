@@ -6,8 +6,8 @@ import url from '@rollup/plugin-url'
 import image from '@rollup/plugin-image'
 import postcss from 'rollup-plugin-postcss'
 // import inject from '@rollup/plugin-inject'
-// import vuePlugin from 'rollup-plugin-vue'
-import vuePlugin from './rollup-plugin-vue'
+import vuePlugin from 'rollup-plugin-vue'
+// import vuePlugin from './rollup-plugin-vue'
 // import commonjs from '@rollup/plugin-commonjs'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
@@ -75,7 +75,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
       exclude: /\/node_modules\//,
       target: 'browser',
       exposeFilename: true,
-      preprocessStyles: true,
+      // preprocessStyles: true,
       cssModulesOptions: {
         localsConvention: 'camelCase'
       }
@@ -99,7 +99,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
     nodeResolve({
       mainFields: ['module', 'jsnext:main', 'main'],
       browser: true,
-      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
+      extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.vue'],
       preferBuiltins: true
     }),
     typescript(typescriptOptions),

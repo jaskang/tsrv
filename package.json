@@ -79,7 +79,7 @@
     "@rollup/plugin-typescript": "^4.1.1",
     "@rollup/plugin-url": "^5.0.0",
     "@rollup/pluginutils": "^3.0.10",
-    "@vue/compiler-sfc": "^3.0.0-beta.12",
+    "@vue/compiler-sfc": "^3.0.0-beta.16",
     "autoprefixer": "^9.7.6",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
@@ -98,9 +98,9 @@
     "rollup": "^2.9.1",
     "rollup-plugin-postcss": "^3.1.1",
     "rollup-plugin-typescript2": "^0.27.1",
-    "rollup-plugin-vue": "^6.0.0-alpha.10",
+    "rollup-plugin-vue": "^6.0.0-alpha.2",
     "tslib": "^1.11.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
@@ -123,6 +123,6 @@
     "prettier": "^2.0.4",
     "shelljs": "^0.8.4",
     "ts-jest": "^25.4.0",
-    "vue": "^3.0.0-beta.12"
+    "vue": "^3.0.0-beta.16"
   }
 }

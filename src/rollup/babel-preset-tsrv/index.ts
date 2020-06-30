@@ -14,7 +14,7 @@ export default declare((api, options) => {
         require('@babel/preset-env'),
         {
           loose: true,
-          targets: { browsers: ['last 2 versions', 'IE 11', 'android >= 4.4'] },
+          targets: { browsers: ['last 2 versions', 'android >= 5'] },
           modules: ENV === 'test' ? 'auto' : false,
           exclude: ['transform-regenerator', 'transform-async-to-generator', 'proposal-object-rest-spread']
         }
