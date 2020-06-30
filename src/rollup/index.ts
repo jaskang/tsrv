@@ -39,7 +39,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
       compilerOptions: {
         sourceMap: true,
         declaration: true,
-        jsx: 'react'
+        jsx: 'preserve'
       }
     },
     tsconfigOverride: {
@@ -102,7 +102,7 @@ function getConfig({ cwd, output, outDir, declaration, tsconfig, pkg, env }: Tsr
       extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.vue'],
       preferBuiltins: true
     }),
-    typescript(typescriptOptions),
+    // typescript(typescriptOptions),
     babel({
       exclude: /\/node_modules\//,
       babelrc: false,
