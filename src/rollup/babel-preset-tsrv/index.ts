@@ -18,10 +18,11 @@ export default declare((api, options) => {
           modules: ENV === 'test' ? 'auto' : false,
           exclude: ['transform-regenerator', 'transform-async-to-generator', 'proposal-object-rest-spread']
         }
-      ],
-      [require('@babel/preset-typescript'), { allExtensions: true }]
+      ]
+      // [require('@babel/preset-typescript'), { allExtensions: true, isTSX: true, jsxPragma: 'preserve' }]
     ],
     plugins: [
+      [require('@babel/plugin-transform-typescript'), { allExtensions: true, isTSX: true, jsxPragma: 'preserve' }],
       [require('@ant-design-vue/babel-plugin-jsx'), { transformOn: true }],
       require('@babel/plugin-syntax-dynamic-import'),
       require('@babel/plugin-proposal-export-default-from'),
