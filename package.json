@@ -35,7 +35,7 @@
     "test": "jest",
     "prepublishOnly": "tsc",
     "commit": "git cz",
-    "release": "np"
+    "release": "release-it"
   },
   "husky": {
     "hooks": {
