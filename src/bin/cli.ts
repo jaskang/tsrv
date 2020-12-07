@@ -2,8 +2,8 @@
 import path from 'path'
 import fs from 'fs-extra'
 import program from 'commander'
-// import minimist from 'minimist'
-import { build } from '../index'
+import { execRollup, watchRollup } from '../index'
+import { loadConfig } from '../config'
 
 const pkg = fs.readJsonSync(path.join(__dirname, '..', '..', 'package.json'))
 
@@ -17,11 +17,20 @@ program
 program
   .command('build')
   .description('rollup 打包')
-  .option('-w, --watch', '监听')
-  .option('-d, --dir [dir]', '输入文件')
-  .action(options => {
-    const cwd = options.dir ? path.join(process.cwd(), options.dir) : process.cwd()
-    build({ cwd: cwd, watch: options.watch })
+  .option('-f, --config [config]', '输入文件')
+  .action(async options => {
+    // const cwd = options.config ?
+    const config = await loadConfig(options.config)
+    await execRollup(config)
+  })
+
+program
+  .command('watch')
+  .description('rollup 打包')
+  .option('-f, --config [dir]', '输入文件')
+  .action(async options => {
+    const config = await loadConfig(options.config)
+    await watchRollup(config)
   })
 
 program.parse(process.argv)

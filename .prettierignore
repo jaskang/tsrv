@@ -4,6 +4,3 @@ dist
 **/*.svg
 **/*.ejs
 **/*.html
-.umi
-.umi-production
-.umi-test

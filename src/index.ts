@@ -1,1 +1,1 @@
-export { build } from './build'
+export { execRollup, watchRollup } from './modules/rollup'
