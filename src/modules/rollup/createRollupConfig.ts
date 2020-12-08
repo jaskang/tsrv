@@ -81,7 +81,7 @@ export function createRollupConfig(
         plugins: [autoprefixer()]
       }),
       typescript({
-        tsconfig: config.tsconfig,
+        tsconfig: config.tsconfigPath,
         tsconfigDefaults: {
           exclude: [
             // all TS test files, regardless whether co-located or in test/ etc
@@ -94,7 +94,8 @@ export function createRollupConfig(
             'node_modules',
             'bower_components',
             'jspm_packages',
-            config.distDir
+            config.distDir,
+            ...config.tsconfigOptions.exclude
           ],
           compilerOptions: {
             sourceMap: true
@@ -112,7 +113,7 @@ export function createRollupConfig(
         useTsconfigDeclarationDir: true
       }),
       bablePlugin({
-        exclude: 'node_modules/**',
+        exclude: /node_modules/,
         extensions: supportedExts,
         babelHelpers: 'bundled',
         // @ts-ignore

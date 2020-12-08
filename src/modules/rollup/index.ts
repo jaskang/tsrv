@@ -5,12 +5,12 @@ import { gzipSync } from 'zlib'
 import { compress } from 'brotli'
 import { OutputOptions, rollup, RollupOptions, watch } from 'rollup'
 import { TsrvConfig } from '../../config'
-import { createRollupConfig } from './config'
-import { default as CreateDebug } from 'debug'
+import { createRollupConfig } from './createRollupConfig'
+import { default as createDebug } from 'debug'
 import buildTypes from '../extractor'
 import { createDts } from './createDts'
 
-const debug = CreateDebug('tsrv:rollup')
+const debug = createDebug('tsrv:rollup')
 
 function checkFileSize(filePath) {
   if (!fs.existsSync(filePath)) {
@@ -108,7 +108,6 @@ export async function watchRollup(config: TsrvConfig) {
     if (event.code === 'END') {
       await outputCjsIndex(config, rollupOptionsArray)
       await createDts(path.join(config.distDir, '__types__/index.d.ts'), path.join(config.distDir, 'index.d.ts'))
-      // await buildTypes(config)
       console.log(chalk.bold.green('Compiled successfully'))
       console.log(`${chalk.dim('Watching for changes')}`)
     }

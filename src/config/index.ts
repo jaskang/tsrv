@@ -1,8 +1,9 @@
 import path from 'path'
 import fs from 'fs-extra'
-import { default as CreateDebug } from 'debug'
+import { default as createDebug } from 'debug'
+import { loadTsconfig, TsconfigOptions } from '../modules/tsconfig'
 
-const debug = CreateDebug('tsrv:config')
+const debug = createDebug('tsrv:config')
 
 export type FormatType = 'esm' | 'cjs' | 'umd'
 
@@ -18,7 +19,8 @@ export type TsrvConfig = {
   name: string
   input: string
   formats: FormatType[]
-  tsconfig: string
+  tsconfigPath: string
+  tsconfigOptions: TsconfigOptions
   plugins: any[]
   srcDir: string
   distDir: string
@@ -42,7 +44,6 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
   }
 
   const configPath = rootResolve(_configPath)
-  const tsconfigPath = rootResolve('tsconfig.json')
 
   const userConfig: TsrvUserConfig = Object.assign(
     {
@@ -54,12 +55,13 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
     } as TsrvUserConfig,
     fs.pathExistsSync(configPath) ? require(configPath) : {}
   )
-
+  const { tsconfigPath, tsconfigOptions } = await loadTsconfig(cwd)
   const config: TsrvConfig = {
     name: packageJSON.name,
     input: rootResolve(userConfig.input),
     formats: userConfig.formats,
-    tsconfig: fs.pathExistsSync(tsconfigPath) ? tsconfigPath : undefined,
+    tsconfigPath,
+    tsconfigOptions,
     plugins: [],
     srcDir: rootResolve(userConfig.srcDir),
     distDir: rootResolve(userConfig.distDir),
