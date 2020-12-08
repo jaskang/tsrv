@@ -60,12 +60,11 @@ export async function execRollup(config: TsrvConfig) {
       return prev
     }, [] as RollupOptions[])
     debug(rollupOptionsArray)
-
-    await outputCjsIndex(config, rollupOptionsArray)
     for (const rollupOptions of rollupOptionsArray) {
       await build(rollupOptions)
       checkFileSize((rollupOptions.output as OutputOptions).file)
     }
+    await outputCjsIndex(config, rollupOptionsArray)
   } catch (error) {
     throw error
   }
@@ -93,7 +92,6 @@ export async function watchRollup(config: TsrvConfig) {
     return prev
   }, [] as RollupOptions[])
   debug(rollupOptionsArray)
-  await outputCjsIndex(config, rollupOptionsArray)
   watch(rollupOptionsArray).on('event', async event => {
     if (event.code === 'START') {
       console.log()
@@ -104,7 +102,7 @@ export async function watchRollup(config: TsrvConfig) {
       console.error(event.error.stack)
     }
     if (event.code === 'END') {
-      console.log(event)
+      await outputCjsIndex(config, rollupOptionsArray)
       console.log(chalk.bold.green('Compiled successfully'))
       console.log(`${chalk.dim('Watching for changes')}`)
     }
