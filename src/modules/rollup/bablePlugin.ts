@@ -1,6 +1,6 @@
 import { createBabelInputPluginFactory } from '@rollup/plugin-babel'
 
-export const createBablePlugin = createBabelInputPluginFactory(() => {
+export const bablePlugin = createBabelInputPluginFactory(() => {
   return {
     options({ tsrvConfig, ...pluginOptions }: any) {
       return {

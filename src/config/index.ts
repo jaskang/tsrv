@@ -4,7 +4,7 @@ import { default as CreateDebug } from 'debug'
 
 const debug = CreateDebug('tsrv:config')
 
-export type FormatType = 'es' | 'cjs' | 'umd'
+export type FormatType = 'esm' | 'cjs' | 'umd'
 
 export type TsrvUserConfig = {
   input: string
@@ -47,7 +47,7 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
   const userConfig: TsrvUserConfig = Object.assign(
     {
       input: 'src/index.ts',
-      formats: ['cjs', 'es'],
+      formats: ['cjs', 'esm'],
       plugins: [],
       srcDir: 'src',
       distDir: 'dist'

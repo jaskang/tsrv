@@ -85,6 +85,7 @@
     "require-from-string": "^2.0.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.34.2",
+    "rollup-plugin-dts": "^2.0.0",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-typescript2": "^0.29.0",
     "rollup-plugin-vue": "^6.0.0",

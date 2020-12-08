@@ -1,3 +1,4 @@
+import path from 'path'
 import { RollupOptions } from 'rollup'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
@@ -11,7 +12,7 @@ import autoprefixer from 'autoprefixer'
 
 import { FormatType, TsrvConfig } from '../../config'
 import { packageName } from '../../utils'
-import { createBablePlugin } from './babelConfig'
+import { bablePlugin } from './bablePlugin'
 
 export const supportedExts = ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
 
@@ -32,7 +33,9 @@ export function createRollupConfig(
       format: format,
       name: packageName(config.name),
       sourcemap: true,
-      exports: 'named'
+      exports: 'named',
+      banner: `/* ${config.packageJSON.name} version ${config.packageJSON.version} */`,
+      compact: isProd
     },
     external: [
       ...Object.keys(config.packageJSON.dependencies || {}),
@@ -42,6 +45,7 @@ export function createRollupConfig(
     treeshake: {
       moduleSideEffects: false
     },
+
     onwarn(warning, warn) {
       // skip certain warnings
       if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
@@ -93,19 +97,21 @@ export function createRollupConfig(
             config.distDir
           ],
           compilerOptions: {
-            sourceMap: true,
-            declaration: true
+            sourceMap: true
           }
         },
         tsconfigOverride: {
           compilerOptions: {
             target: 'esnext',
-            ...(outputNum > 0 ? { declaration: false, declarationMap: false } : {})
+            ...(outputNum > 0
+              ? { declaration: false, declarationMap: false }
+              : { declaration: true, declarationMap: false, declarationDir: path.join(config.distDir, '__types__') })
           }
         },
-        check: outputNum === 0
+        check: outputNum === 0,
+        useTsconfigDeclarationDir: true
       }),
-      createBablePlugin({
+      bablePlugin({
         exclude: 'node_modules/**',
         extensions: supportedExts,
         babelHelpers: 'bundled',
