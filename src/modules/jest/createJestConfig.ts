@@ -5,7 +5,7 @@ export type JestConfigOptions = Partial<Config.InitialOptions>
 
 export function createJestConfig(config: TsrvConfig): JestConfigOptions {
   const jestConfig: JestConfigOptions = {
-    preset: require.resolve('ts-jest'),
+    preset: require.resolve('ts-jest/presets/default'),
     globals: {
       __DEV__: true,
       __TEST__: true,
