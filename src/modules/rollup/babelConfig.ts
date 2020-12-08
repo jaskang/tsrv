@@ -11,25 +11,18 @@ export const createBablePlugin = createBabelInputPluginFactory(() => {
     config(cfg /* Passed Babel's 'PartialConfig' object. */, { code, customOptions }) {
       return {
         presets: [
-          {
-            name: '@babel/preset-env',
+          [
+            require.resolve('@babel/preset-env'),
             // targets: customOptions.targets,
-            modules: false,
-            loose: true
-          }
+            { modules: false, loose: true }
+          ]
         ],
         plugins: [
-          { name: 'babel-plugin-macros' },
-          ['@vue/babel-plugin-jsx', { transformOn: true }],
-          { name: 'babel-plugin-annotate-pure-calls' },
-          {
-            name: 'babel-plugin-polyfill-regenerator',
-            method: 'usage-pure'
-          },
-          {
-            name: '@babel/plugin-proposal-class-properties',
-            loose: true
-          }
+          [require.resolve('babel-plugin-macros')],
+          [require.resolve('@vue/babel-plugin-jsx'), { transformOn: true }],
+          [require.resolve('babel-plugin-annotate-pure-calls')],
+          [require.resolve('babel-plugin-polyfill-regenerator'), { method: 'usage-pure' }],
+          [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }]
         ]
       }
     }

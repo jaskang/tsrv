@@ -1,4 +1,4 @@
-import { rollup, RollupOptions } from 'rollup'
+import { RollupOptions } from 'rollup'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import replace from '@rollup/plugin-replace'
@@ -42,6 +42,14 @@ export function createRollupConfig(
     treeshake: {
       moduleSideEffects: false
     },
+    onwarn(warning, warn) {
+      // skip certain warnings
+      if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
+      // throw on others
+      if (warning.code === 'NON_EXISTENT_EXPORT') throw new Error(warning.message)
+      // Use default for everything else
+      warn(warning)
+    },
     plugins: [
       replace({
         'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
@@ -73,6 +81,7 @@ export function createRollupConfig(
         tsconfigDefaults: {
           exclude: [
             // all TS test files, regardless whether co-located or in test/ etc
+            '**/__tests__',
             '**/*.spec.ts',
             '**/*.test.ts',
             '**/*.spec.tsx',

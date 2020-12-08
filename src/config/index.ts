@@ -7,10 +7,10 @@ const debug = CreateDebug('tsrv:config')
 export type FormatType = 'es' | 'cjs' | 'umd'
 
 export type TsrvUserConfig = {
-  name: string
   input: string
   formats: FormatType[]
-  tsconfig: string
+  srcDir: string
+  distDir: string
   plugins: any[]
 }
 
@@ -41,26 +41,32 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
     throw new Error(`The package.json file must have the attribute: name`)
   }
 
-  const configPath = path.resolve(cwd, _configPath)
+  const configPath = rootResolve(_configPath)
+  const tsconfigPath = rootResolve('tsconfig.json')
 
-  let config: TsrvConfig = {
+  const userConfig: TsrvUserConfig = Object.assign(
+    {
+      input: 'src/index.ts',
+      formats: ['cjs', 'es'],
+      plugins: [],
+      srcDir: 'src',
+      distDir: 'dist'
+    } as TsrvUserConfig,
+    fs.pathExistsSync(configPath) ? require(configPath) : {}
+  )
+
+  const config: TsrvConfig = {
     name: packageJSON.name,
-    input: '',
-    formats: ['cjs', 'es'],
-    tsconfig: rootResolve('tsconfig.json'),
+    input: rootResolve(userConfig.input),
+    formats: userConfig.formats,
+    tsconfig: fs.pathExistsSync(tsconfigPath) ? tsconfigPath : undefined,
     plugins: [],
-    srcDir: rootResolve('src'),
-    distDir: rootResolve('dist'),
+    srcDir: rootResolve(userConfig.srcDir),
+    distDir: rootResolve(userConfig.distDir),
     root: cwd,
     packageJSON: packageJSON,
     resolve: (...p: string[]) => rootResolve(...p)
   }
-  if (fs.pathExistsSync(configPath)) {
-    try {
-      config = Object.assign(config, require(configPath))
-    } catch (error) {
-      debug(error)
-    }
-  }
+  debug(config)
   return config
 }
