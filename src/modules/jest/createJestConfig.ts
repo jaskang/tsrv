@@ -1,11 +1,12 @@
 import { Config } from '@jest/types'
+import path from 'path'
 import { pathsToModuleNameMapper } from 'ts-jest/utils'
 import { TsrvConfig } from '../../config'
 export type JestConfigOptions = Partial<Config.InitialOptions>
 
 export function createJestConfig(config: TsrvConfig): JestConfigOptions {
   const jestConfig: JestConfigOptions = {
-    preset: require.resolve('ts-jest/presets/default/jest-preset.js'),
+    preset: path.join(path.dirname(require.resolve('ts-jest')), '..'),
     globals: {
       __DEV__: true,
       __TEST__: true,
