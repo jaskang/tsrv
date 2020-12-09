@@ -7,9 +7,14 @@ export type JestConfigOptions = Partial<Config.InitialOptions>
 
 export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOptions> {
   const jestConfigPath = path.join(config.root, 'jest.config.js')
-  let jestUserConfig: JestConfigOptions = {}
+  let jestUserConfig: JestConfigOptions = {
+    globals: {},
+    modulePaths: [],
+    moduleNameMapper: {}
+  }
   if (await fs.pathExists(jestConfigPath)) {
-    jestUserConfig = require(jestConfigPath)
+    const userConfig = require(jestConfigPath)
+    jestUserConfig = Object.assign({}, jestUserConfig, userConfig)
   }
   const jestConfig: JestConfigOptions = {
     preset: path.join(path.dirname(require.resolve('ts-jest')), '..'),
