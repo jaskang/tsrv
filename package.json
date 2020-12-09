@@ -95,11 +95,6 @@
     "vue": "^3.0.4",
     "zlib": "^1.0.5"
   },
-  "peerDependencies": {
-    "babel-jest": "^26.6.3",
-    "vue-jest": "^5.0.0-alpha.7",
-    "@vue/babel-plugin-jsx": "^1.0.0-rc.4"
-  },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
