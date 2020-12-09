@@ -13,6 +13,7 @@ export type TsrvUserConfig = {
   srcDir: string
   distDir: string
   plugins: any[]
+  monorepoRoot: string
 }
 
 export type TsrvConfig = {
@@ -25,6 +26,7 @@ export type TsrvConfig = {
   srcDir: string
   distDir: string
   root: string
+  monorepoRoot: string
   packageJSON: Record<string, any>
   resolve: (...p: string[]) => string
 }
@@ -51,7 +53,8 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
       formats: ['cjs', 'esm'],
       plugins: [],
       srcDir: 'src',
-      distDir: 'dist'
+      distDir: 'dist',
+      monorepoRoot: undefined
     } as TsrvUserConfig,
     fs.pathExistsSync(configPath) ? require(configPath) : {}
   )
@@ -66,6 +69,7 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
     srcDir: rootResolve(userConfig.srcDir),
     distDir: rootResolve(userConfig.distDir),
     root: cwd,
+    monorepoRoot: userConfig.monorepoRoot,
     packageJSON: packageJSON,
     resolve: (...p: string[]) => rootResolve(...p)
   }
