@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { Config } from '@jest/types'
-import { pathsToModuleNameMapper } from 'ts-jest/utils'
+// import { pathsToModuleNameMapper } from 'ts-jest/utils'
 import { TsrvConfig } from '../../config'
 export type JestConfigOptions = Partial<Config.InitialOptions>
 
@@ -9,7 +9,6 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
   const jestConfigPath = path.join(config.root, 'jest.config.js')
   let jestUserConfig: JestConfigOptions = {
     globals: {},
-    modulePaths: [],
     moduleNameMapper: {}
   }
   if (await fs.pathExists(jestConfigPath)) {
@@ -17,46 +16,53 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
     jestUserConfig = Object.assign({}, jestUserConfig, userConfig)
   }
   const jestConfig: JestConfigOptions = {
-    preset: path.join(path.dirname(require.resolve('ts-jest')), '..'),
-    testEnvironment: 'jsdom',
     transform: {
-      '^.+\\.vue$': require.resolve('vue-jest')
+      '\\.vue$': require.resolve('vue-jest'),
+      '\\.[jt]sx?$': [
+        require.resolve('babel-jest'),
+        {
+          presets: [
+            [
+              require.resolve('@babel/preset-env'),
+              {
+                targets: { node: 'current' },
+                modules: 'commonjs'
+              }
+            ],
+            [
+              require.resolve('@babel/preset-typescript'),
+              {
+                allExtensions: true,
+                isTSX: true,
+                jsxPragma: 'preserve'
+              }
+            ]
+          ],
+          plugins: [
+            [require.resolve('@vue/babel-plugin-jsx'), { transformOn: true }],
+            ['@babel/plugin-syntax-dynamic-import']
+          ]
+        }
+      ]
+      // '.(ts|tsx)$': require.resolve('ts-jest'),
     },
-    transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$'],
+    // transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$'],
+    testEnvironment: 'jsdom',
     moduleFileExtensions: ['vue', 'ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    collectCoverageFrom: ['src/**/*.{vue,ts,tsx,js,jsx}'],
+    collectCoverageFrom: ['<rootDir>/src/**/*.{vue,ts,tsx,js,jsx}'],
     testMatch: ['<rootDir>/**/*.(spec|test).{ts,tsx,js,jsx}'],
     rootDir: config.root,
     ...jestUserConfig,
-    modulePaths: [path.join(config.monorepoRoot || config.root, 'node_modules'), ...jestUserConfig.modulePaths].filter(
-      Boolean
-    ),
     moduleNameMapper: {
-      ...pathsToModuleNameMapper(config.tsconfigOptions.compilerOptions.paths || {}, {
-        prefix: '<rootDir>/'
-      }),
+      // ...pathsToModuleNameMapper(config.tsconfigOptions.compilerOptions.paths || {}, {
+      //   prefix: '<rootDir>/'
+      // }),
       ...jestUserConfig.moduleNameMapper
     },
     globals: {
       ...jestUserConfig.globals,
       __DEV__: true,
-      __TEST__: true,
-      'ts-jest': {
-        tsconfig: config.tsconfigOptions.compilerOptions,
-        babelConfig: {
-          presets: [
-            [
-              require.resolve('@babel/preset-env'),
-              {
-                targets: {
-                  node: 'current'
-                }
-              }
-            ]
-          ],
-          plugins: [[require.resolve('@vue/babel-plugin-jsx'), { transformOn: true }]]
-        }
-      }
+      __TEST__: true
     }
 
     // watchPlugins: [require.resolve('jest-watch-typeahead/filename'), require.resolve('jest-watch-typeahead/testname')]
@@ -64,3 +70,39 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
 
   return jestConfig
 }
+
+// console.log(process.env.NODE_ENV)
+
+// module.exports = api => {
+//   const isTest = api.env('test')
+//   return {
+//     presets: [
+//       ['@babel/env', isTest ? { targets: { node: 'current' }, modules: 'commonjs' } : { loose: true, modules: false }],
+//       [
+//         '@babel/preset-typescript',
+//         {
+//           allExtensions: true,
+//           isTSX: true,
+//           jsxPragma: 'preserve'
+//         }
+//       ]
+//     ],
+//     plugins: [
+//       ['@babel/plugin-transform-runtime'],
+//       [
+//         '@vue/babel-plugin-jsx',
+//         {
+//           transformOn: true,
+//           optimize: true
+//         }
+//       ],
+//       ['@babel/plugin-syntax-dynamic-import'],
+//       ['@babel/plugin-proposal-export-default-from'],
+//       ['@babel/plugin-proposal-class-properties', { loose: true }],
+//       // 支持 optional chaining (.?)
+//       ['@babel/plugin-proposal-optional-chaining'],
+//       // 支持 ?? operator
+//       ['@babel/plugin-proposal-nullish-coalescing-operator']
+//     ]
+//   }
+// }
