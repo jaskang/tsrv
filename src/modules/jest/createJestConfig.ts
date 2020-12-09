@@ -28,7 +28,9 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
     testMatch: ['<rootDir>/**/*.(spec|test).{ts,tsx,js,jsx}'],
     rootDir: config.root,
     ...jestUserConfig,
-    modulePaths: [config.monorepoRoot, ...jestUserConfig.modulePaths].filter(Boolean),
+    modulePaths: [path.join(config.monorepoRoot || config.root, 'node_modules'), ...jestUserConfig.modulePaths].filter(
+      Boolean
+    ),
     moduleNameMapper: {
       ...pathsToModuleNameMapper(config.tsconfigOptions.compilerOptions.paths || {}, {
         prefix: '<rootDir>/'
