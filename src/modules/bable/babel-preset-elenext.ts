@@ -45,6 +45,8 @@ export function babelPresetElenext(api, opts) {
   const env = api.env()
 
   debug(`env:${chalk.redBright(chalk.bold(env))}`)
-
-  return createBabelConfig(env)
+  const ret = createBabelConfig(env)
+  return ret
 }
+
+export default babelPresetElenext
