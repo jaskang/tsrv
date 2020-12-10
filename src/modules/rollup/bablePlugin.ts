@@ -1,16 +1,18 @@
 import { createBabelInputPluginFactory } from '@rollup/plugin-babel'
-import { TsrvConfig } from '../../config'
-import { createBabelConfig } from '../bable'
+import { babelPresetElenext } from '../bable'
+
 export const bablePlugin = createBabelInputPluginFactory(() => {
   return {
-    options({ tsrvConfig, ...pluginOptions }: any) {
+    options({ customOptions, ...pluginOptions }: any) {
       return {
-        customOptions: tsrvConfig,
+        customOptions,
         pluginOptions
       }
     },
     config(cfg, { code, customOptions }) {
-      return createBabelConfig(customOptions as TsrvConfig, customOptions.env)
+      return {
+        presets: [[babelPresetElenext, customOptions]]
+      }
     }
   }
 })

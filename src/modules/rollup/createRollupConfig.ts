@@ -13,6 +13,7 @@ import autoprefixer from 'autoprefixer'
 
 import { FormatType, TsrvConfig } from '../../config'
 import { packageName } from '../../utils'
+import { bablePlugin } from './bablePlugin'
 // import { bablePlugin } from './bablePlugin'
 
 export const supportedExts = ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
@@ -113,11 +114,13 @@ export function createRollupConfig(
         check: outputNum === 0,
         useTsconfigDeclarationDir: true
       }),
-      babel({
+      bablePlugin({
         exclude: /node_modules/,
         extensions: supportedExts,
         babelHelpers: 'bundled',
-        babelrc: true
+        babelrc: false,
+        // @ts-ignore
+        customOptions: {}
       })
     ]
   }

@@ -3,22 +3,12 @@ import { default as createDebug } from 'debug'
 
 const debug = createDebug('tsrv: babel-preset-elenext')
 
-export function babelPresetElenext(api, opts) {
-  if (!opts) {
-    opts = {}
-  }
-  const env = api.env()
-  // var isEnvDevelopment = env === 'development'
-  // var isEnvProduction = env === 'production'
-  var isEnvTest = env === 'test'
-
-  console.log(`babel env:${chalk.redBright(chalk.bold(env))}`)
-
+export function createBabelConfig(env: 'development' | 'production' | 'test') {
   return {
     presets: [
       [
-        require('@babel/preset-env').default,
-        isEnvTest
+        '@babel/preset-env',
+        env === 'test'
           ? {
               targets: {
                 node: 'current'
@@ -29,21 +19,32 @@ export function babelPresetElenext(api, opts) {
       ]
     ].filter(Boolean),
     plugins: [
-      require('babel-plugin-macros'),
-      [require('@babel/plugin-proposal-decorators').default, { legacy: true }],
-      [require('@babel/plugin-proposal-class-properties').default, { loose: true }],
-      [require('@babel/plugin-transform-runtime').default],
+      'babel-plugin-macros',
+      ['@babel/plugin-proposal-decorators', { legacy: true }],
+      ['@babel/plugin-proposal-class-properties', { loose: true }],
+      // ['@babel/plugin-transform-runtime'],
       // obj?.['foo']?.bar?.baz
-      require('@babel/plugin-proposal-optional-chaining').default,
+      '@babel/plugin-proposal-optional-chaining',
       // var foo = object.foo ?? "default";
-      require('@babel/plugin-proposal-nullish-coalescing-operator').default,
-      require('@babel/plugin-proposal-object-rest-spread').default,
+      '@babel/plugin-proposal-nullish-coalescing-operator',
+      '@babel/plugin-proposal-object-rest-spread',
       // export v from 'mod';
-      require('@babel/plugin-proposal-export-default-from').default,
+      '@babel/plugin-proposal-export-default-from',
       // export * as ns from 'mod';
-      require('@babel/plugin-proposal-export-namespace-from').default,
-      require('@babel/plugin-transform-modules-commonjs').default,
-      require('@babel/plugin-syntax-dynamic-import').default
+      '@babel/plugin-proposal-export-namespace-from',
+      '@babel/plugin-transform-modules-commonjs',
+      '@babel/plugin-syntax-dynamic-import'
     ].filter(Boolean)
   }
+}
+
+export function babelPresetElenext(api, opts) {
+  if (!opts) {
+    opts = {}
+  }
+  const env = api.env()
+
+  debug(`env:${chalk.redBright(chalk.bold(env))}`)
+
+  return createBabelConfig(env)
 }

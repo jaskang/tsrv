@@ -8,6 +8,6 @@ export async function execJest(config: TsrvConfig) {
   process.on('unhandledRejection', err => {
     throw err
   })
-  const jestConfig = createJestConfig(config)
-  run(['--config', JSON.stringify(jestConfig)])
+  const jestConfig = await createJestConfig(config)
+  await run(['--config', JSON.stringify(jestConfig)])
 }

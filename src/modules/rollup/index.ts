@@ -7,7 +7,7 @@ import { OutputOptions, rollup, RollupOptions, watch } from 'rollup'
 import { TsrvConfig } from '../../config'
 import { createRollupConfig } from './createRollupConfig'
 import { default as createDebug } from 'debug'
-import buildTypes from '../extractor'
+// import buildTypes from '../extractor'
 import { createDts } from './createDts'
 
 const debug = createDebug('tsrv:rollup')
