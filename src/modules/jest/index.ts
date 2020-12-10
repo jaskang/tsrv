@@ -1,6 +1,6 @@
 import { TsrvConfig } from '../../config'
 import { createJestConfig } from './createJestConfig'
-import jest from 'jest'
+import { run } from 'jest'
 
 export async function execJest(config: TsrvConfig) {
   process.env.BABEL_ENV = 'test'
@@ -9,5 +9,5 @@ export async function execJest(config: TsrvConfig) {
     throw err
   })
   const jestConfig = createJestConfig(config)
-  jest.run(['--config', JSON.stringify(jestConfig)])
+  run(['--config', JSON.stringify(jestConfig)])
 }
