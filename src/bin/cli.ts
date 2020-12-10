@@ -5,6 +5,7 @@ import program from 'commander'
 import { loadConfig } from '../config'
 import minimist from 'minimist'
 import { execRollup, watchRollup } from '../index'
+import { execJest } from '../modules/jest'
 
 const argv = minimist(process.argv.slice(2))
 if (argv.debug) {
@@ -40,14 +41,15 @@ program
     await execRollup(config)
   })
 
-// program
-//   .command('test')
-//   .description('tsrv test')
-//   .option('-f, --config [config]', '输入文件')
-//   .action(async options => {
-//     const config = await loadConfig(options.config)
-//     await execJest(config)
-//   })
+program
+  .command('test')
+  .description('tsrv test')
+  .option('-f, --config [config]', '输入文件')
+  .action(async options => {
+    const config = await loadConfig(options.config)
+    await execJest(config)
+  })
+
 program.parse(process.argv)
 
 if (!process.argv.slice(2).length) {

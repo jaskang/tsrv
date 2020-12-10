@@ -16,7 +16,9 @@ export type TsrvUserConfig = {
   monorepoRoot: string
 }
 
+type EnvType = 'development' | 'production' | 'test'
 export type TsrvConfig = {
+  env: EnvType
   name: string
   input: string
   formats: FormatType[]
@@ -59,7 +61,11 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
     fs.pathExistsSync(configPath) ? require(configPath) : {}
   )
   const { tsconfigPath, tsconfigOptions } = await loadTsconfig(cwd)
+  const env = ['test', 'production'].includes(process.env.NODE_ENV)
+    ? (process.env.NODE_ENV.toLowerCase() as EnvType)
+    : 'development'
   const config: TsrvConfig = {
+    env: env,
     name: packageJSON.name,
     input: rootResolve(userConfig.input),
     formats: userConfig.formats,

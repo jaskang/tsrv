@@ -1,12 +1,13 @@
-// import { TsrvConfig } from '../../config'
-// import { createJestConfig } from './createJestConfig'
+import { TsrvConfig } from '../../config'
+import { createJestConfig } from './createJestConfig'
+import jest from 'jest'
 
-// export async function execJest(config: TsrvConfig) {
-//   process.env.BABEL_ENV = 'test'
-//   process.env.NODE_ENV = 'test'
-//   process.on('unhandledRejection', err => {
-//     throw err
-//   })
-//   const jestConfig = createJestConfig(config)
-//   jest.run(['--config', JSON.stringify(jestConfig)])
-// }
+export async function execJest(config: TsrvConfig) {
+  process.env.BABEL_ENV = 'test'
+  process.env.NODE_ENV = 'test'
+  process.on('unhandledRejection', err => {
+    throw err
+  })
+  const jestConfig = createJestConfig(config)
+  jest.run(['--config', JSON.stringify(jestConfig)])
+}

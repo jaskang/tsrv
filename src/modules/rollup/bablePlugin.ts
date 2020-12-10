@@ -1,5 +1,6 @@
 import { createBabelInputPluginFactory } from '@rollup/plugin-babel'
-
+import { TsrvConfig } from '../../config'
+import { createBabelConfig } from '../bable'
 export const bablePlugin = createBabelInputPluginFactory(() => {
   return {
     options({ tsrvConfig, ...pluginOptions }: any) {
@@ -8,15 +9,8 @@ export const bablePlugin = createBabelInputPluginFactory(() => {
         pluginOptions
       }
     },
-    config(cfg /* Passed Babel's 'PartialConfig' object. */, { code, customOptions }) {
-      return {
-        presets: [[require.resolve('@babel/preset-env'), { modules: false, loose: true }]],
-        plugins: [
-          [require.resolve('babel-plugin-macros')],
-          [require.resolve('@vue/babel-plugin-jsx'), { transformOn: true }],
-          [require.resolve('@babel/plugin-proposal-class-properties'), { loose: true }]
-        ]
-      }
+    config(cfg, { code, customOptions }) {
+      return createBabelConfig(customOptions as TsrvConfig, customOptions.env)
     }
   }
 })
