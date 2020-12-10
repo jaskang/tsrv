@@ -13,7 +13,6 @@ import autoprefixer from 'autoprefixer'
 
 import { FormatType, TsrvConfig } from '../../config'
 import { packageName } from '../../utils'
-import { babelPresetElenext } from '../bable'
 
 export const supportedExts = ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
 
@@ -118,7 +117,7 @@ export function createRollupConfig(
         extensions: supportedExts,
         babelHelpers: 'bundled',
         babelrc: false,
-        presets: [[babelPresetElenext, {}]]
+        presets: [[require.resolve('tsrv/dist/modules/babelPresetElenext'), {}]]
       })
     ]
   }

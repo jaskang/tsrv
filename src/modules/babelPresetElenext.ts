@@ -38,7 +38,7 @@ export function createBabelConfig(env: 'development' | 'production' | 'test') {
   }
 }
 
-export function babelPresetElenext(api, opts) {
+export default function babelPresetElenext(api, opts) {
   if (!opts) {
     opts = {}
   }
@@ -48,5 +48,3 @@ export function babelPresetElenext(api, opts) {
   const ret = createBabelConfig(env)
   return ret
 }
-
-export default babelPresetElenext

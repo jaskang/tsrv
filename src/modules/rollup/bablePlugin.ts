@@ -1,5 +1,5 @@
 import { createBabelInputPluginFactory } from '@rollup/plugin-babel'
-import { babelPresetElenext } from '../bable'
+import babelPresetElenext from '../babelPresetElenext'
 
 export const bablePlugin = createBabelInputPluginFactory(() => {
   return {

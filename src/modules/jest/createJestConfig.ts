@@ -3,7 +3,6 @@ import fs from 'fs-extra'
 import { Config } from '@jest/types'
 import { pathsToModuleNameMapper } from 'ts-jest/utils'
 import { TsrvConfig } from '../../config'
-import { babelPresetElenext } from '../bable'
 export type JestConfigOptions = Partial<Config.InitialOptions>
 
 export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOptions> {
@@ -43,10 +42,9 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
       __DEV__: true,
       __TEST__: true,
       'ts-jest': {
-        babelConfig: { presets: [babelPresetElenext] }
+        babelConfig: { presets: [[require.resolve('tsrv/dist/modules/babelPresetElenext'), {}]] }
       }
     }
-
     // watchPlugins: [require.resolve('jest-watch-typeahead/filename'), require.resolve('jest-watch-typeahead/testname')]
   }
 
