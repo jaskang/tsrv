@@ -17,27 +17,31 @@
   </a>
 </p>
 
-> Zero-config TypeScript package development
+> Tsrv is based on rollup, 0 Zero-config can quickly develop vue 3 component library
 
 ### 🏠 [Homepage](https://github.com/jaskang/tsrv)
 
 ## Install
 
 ```sh
-yarn install
+yarn install tsrv -D
 ```
 
 ## Usage
 
-```sh
-yarn run start
+```json
+{
+  "scripts": {
+    "dev": "tsrv dev",
+    "build": "tsrv build",
+    "test": "tsrv test"
+  }
+}
 ```
 
-## Run tests
+## Example
 
-```sh
-yarn run test
-```
+- ### [elenext](https://github.com/JasKang/elenext)
 
 ## Author
 
