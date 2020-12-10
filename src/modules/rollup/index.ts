@@ -37,9 +37,9 @@ async function outputCjsIndex(config: TsrvConfig, rollupOptionsArray: RollupOpti
       config.resolve('dist/index.js'),
       `'use strict'
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('${cjsDev}')
+  module.exports = require('./${cjsDev}')
 } else {
-  module.exports = require('${cjsProd}')
+  module.exports = require('./${cjsProd}')
 }`,
       'utf8'
     )
