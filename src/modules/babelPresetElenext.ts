@@ -20,6 +20,7 @@ export function createBabelConfig(env: 'development' | 'production' | 'test') {
     ].filter(Boolean),
     plugins: [
       'babel-plugin-macros',
+      ['@vue/babel-plugin-jsx', { optimize: true }],
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       ['@babel/plugin-proposal-class-properties', { loose: true }],
       // ['@babel/plugin-transform-runtime'],
@@ -32,7 +33,7 @@ export function createBabelConfig(env: 'development' | 'production' | 'test') {
       '@babel/plugin-proposal-export-default-from',
       // export * as ns from 'mod';
       '@babel/plugin-proposal-export-namespace-from',
-      '@babel/plugin-transform-modules-commonjs',
+      // '@babel/plugin-transform-modules-commonjs',
       '@babel/plugin-syntax-dynamic-import'
     ].filter(Boolean)
   }
