@@ -1,21 +1,18 @@
-export function babelPresetElenext(api, opts, env) {
+import chalk from 'chalk'
+import { default as createDebug } from 'debug'
+
+const debug = createDebug('tsrv: babel-preset-elenext')
+
+export function babelPresetElenext(api, opts) {
   if (!opts) {
     opts = {}
   }
-
-  var isEnvDevelopment = env === 'development'
-  var isEnvProduction = env === 'production'
+  const env = api.env()
+  // var isEnvDevelopment = env === 'development'
+  // var isEnvProduction = env === 'production'
   var isEnvTest = env === 'test'
 
-  if (!isEnvDevelopment && !isEnvProduction && !isEnvTest) {
-    throw new Error(
-      'Using `babel-preset-elenext` requires that you specify `NODE_ENV` or ' +
-        '`BABEL_ENV` environment variables. Valid values are "development", ' +
-        '"test", and "production". Instead, received: ' +
-        JSON.stringify(env) +
-        '.'
-    )
-  }
+  console.log(`babel env:${chalk.redBright(chalk.bold(env))}`)
 
   return {
     presets: [
