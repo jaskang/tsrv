@@ -1,2 +1,3 @@
 export { execRollup, watchRollup } from './modules/rollup'
-// export { execJest } from './modules/jest'
+export { execJest } from './modules/jest'
+export { babelPresetElenext } from './modules/bable'

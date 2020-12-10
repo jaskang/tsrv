@@ -5,6 +5,7 @@ import json from '@rollup/plugin-json'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import dynamicImport from '@rollup/plugin-dynamic-import-vars'
+import babel from '@rollup/plugin-babel'
 import vue from 'rollup-plugin-vue'
 import postcss from 'rollup-plugin-postcss'
 import typescript from 'rollup-plugin-typescript2'
@@ -12,7 +13,7 @@ import autoprefixer from 'autoprefixer'
 
 import { FormatType, TsrvConfig } from '../../config'
 import { packageName } from '../../utils'
-import { bablePlugin } from './bablePlugin'
+// import { bablePlugin } from './bablePlugin'
 
 export const supportedExts = ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
 
@@ -112,12 +113,11 @@ export function createRollupConfig(
         check: outputNum === 0,
         useTsconfigDeclarationDir: true
       }),
-      bablePlugin({
+      babel({
         exclude: /node_modules/,
         extensions: supportedExts,
         babelHelpers: 'bundled',
-        // @ts-ignore
-        tsrvConfig: config
+        babelrc: true
       })
     ]
   }

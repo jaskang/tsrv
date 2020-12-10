@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import { Config } from '@jest/types'
 import { pathsToModuleNameMapper } from 'ts-jest/utils'
 import { TsrvConfig } from '../../config'
-import { createBabelConfig } from '../bable'
+// import { createBabelConfig } from '../bable'
 export type JestConfigOptions = Partial<Config.InitialOptions>
 
 export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOptions> {
@@ -43,7 +43,7 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
       __DEV__: true,
       __TEST__: true,
       'ts-jest': {
-        babelConfig: createBabelConfig(config, config.env)
+        babelConfig: true
       }
     }
 

@@ -1,4 +1,5 @@
 import { TsrvConfig } from '../../config'
+export { babelPresetElenext } from './babel-preset-elenext'
 
 export function createBabelConfig(config: TsrvConfig, env: 'test' | 'development' | 'production') {
   const defaultConfig = {
@@ -11,7 +12,6 @@ export function createBabelConfig(config: TsrvConfig, env: 'test' | 'development
       '@babel/plugin-proposal-optional-chaining',
       // ??
       '@babel/plugin-proposal-nullish-coalescing-operator',
-      '@babel/plugin-transform-object-assign',
       '@babel/plugin-proposal-object-rest-spread',
       '@babel/plugin-proposal-export-default-from',
       '@babel/plugin-proposal-export-namespace-from',
