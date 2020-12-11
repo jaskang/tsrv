@@ -108,7 +108,6 @@ export async function watchRollup(config: TsrvConfig) {
       // @ts-ignore
       console.log(chalk.bold.red(event.error.stack || event.error.filename || ''))
       console.log('')
-      console.error(event.error.stack)
     }
     if (event.code === 'END') {
       await outputCjsIndex(config, rollupOptionsArray)

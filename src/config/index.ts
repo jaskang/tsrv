@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import { default as createDebug } from 'debug'
 import { loadTsconfig, TsconfigOptions } from '../modules/tsconfig'
+import { PostCSSPluginConf } from 'rollup-plugin-postcss'
 
 const debug = createDebug('tsrv:config')
 
@@ -14,6 +15,7 @@ export type TsrvUserConfig = {
   distDir: string
   plugins: any[]
   monorepoRoot: string
+  postcssOptions: PostCSSPluginConf
 }
 
 type EnvType = 'development' | 'production' | 'test'
@@ -29,6 +31,7 @@ export type TsrvConfig = {
   distDir: string
   root: string
   monorepoRoot: string
+  postcssOptions: PostCSSPluginConf
   packageJSON: Record<string, any>
   resolve: (...p: string[]) => string
 }
@@ -56,7 +59,8 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
       plugins: [],
       srcDir: 'src',
       distDir: 'dist',
-      monorepoRoot: undefined
+      monorepoRoot: undefined,
+      postcssOptions: {}
     } as TsrvUserConfig,
     fs.pathExistsSync(configPath) ? require(configPath) : {}
   )
@@ -76,6 +80,7 @@ export async function loadConfig(_configPath: string = './tsrc.config.js') {
     distDir: rootResolve(userConfig.distDir),
     root: cwd,
     monorepoRoot: userConfig.monorepoRoot,
+    postcssOptions: userConfig.postcssOptions,
     packageJSON: packageJSON,
     resolve: (...p: string[]) => rootResolve(...p)
   }

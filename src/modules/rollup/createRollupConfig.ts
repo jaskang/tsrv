@@ -78,7 +78,10 @@ export function createRollupConfig(
       }),
       postcss({
         extract: true,
-        plugins: [autoprefixer()]
+        ...config.postcssOptions,
+        plugins: Array.isArray(config.postcssOptions.plugins)
+          ? [...config.postcssOptions.plugins, autoprefixer()]
+          : [autoprefixer()]
       }),
       typescript({
         tsconfig: config.tsconfigPath,
