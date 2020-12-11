@@ -98,11 +98,16 @@ export async function watchRollup(config: TsrvConfig) {
   debug(rollupOptionsArray)
   watch(rollupOptionsArray).on('event', async event => {
     if (event.code === 'START') {
-      console.log()
       console.log(chalk.bold.cyan('Compiling modules...'))
     }
     if (event.code === 'ERROR') {
-      console.log(chalk.bold.red('Failed to compile'))
+      console.log(chalk.bold.red('Failed to compile:'))
+      console.log('')
+      console.log(chalk.bold.red(`${event.error.message}`))
+      console.log('')
+      // @ts-ignore
+      console.log(chalk.bold.red(event.error.stack || event.error.filename || ''))
+      console.log('')
       console.error(event.error.stack)
     }
     if (event.code === 'END') {
