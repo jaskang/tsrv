@@ -9,5 +9,5 @@ export async function execJest(config: TsrvConfig) {
     throw err
   })
   const jestConfig = await createJestConfig(config)
-  await run(['--config', JSON.stringify(jestConfig)])
+  await run(['--passWithNoTests', '--config', JSON.stringify(jestConfig)])
 }
