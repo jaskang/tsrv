@@ -1,6 +1,6 @@
 {
   "name": "tsrv",
-  "version": "0.8.14",
+  "version": "0.8.15",
   "main": "dist/index.js",
   "author": "jaskang",
   "license": "MIT",
