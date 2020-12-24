@@ -36,7 +36,7 @@ export type TsrvConfig = {
   resolve: (...p: string[]) => string
 }
 
-export async function loadConfig(_configPath: string = './tsrc.config.js') {
+export async function loadConfig(_configPath: string = './tsrv.config.js') {
   const cwd = process.cwd()
   const rootResolve = (...paths: string[]) => path.resolve(cwd, ...paths)
   const packagePath = rootResolve('package.json')
