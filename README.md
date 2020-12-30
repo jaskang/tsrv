@@ -24,7 +24,7 @@
 ## Install
 
 ```sh
-yarn install tsrv -D
+yarn add tsrv -D
 ```
 
 ## Usage
