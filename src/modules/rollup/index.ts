@@ -7,6 +7,7 @@ import { OutputOptions, rollup, RollupOptions, watch } from 'rollup'
 import { TsrvConfig } from '../../config'
 import { createRollupConfig } from './createRollupConfig'
 import { default as createDebug } from 'debug'
+import { buildTypes } from '../definition'
 
 const debug = createDebug('tsrv:rollup')
 
@@ -15,29 +16,31 @@ function checkFileSize(filePath) {
     return
   }
   const file = fs.readFileSync(filePath)
-  const minSize = (file.length / 1024).toFixed(2) + 'kb'
+  const fileSize = (file.length / 1024).toFixed(2) + 'kb'
   const gzipped = gzipSync(file)
   const gzippedSize = (gzipped.length / 1024).toFixed(2) + 'kb'
   const compressed = compress(file)
   const compressedSize = (compressed.length / 1024).toFixed(2) + 'kb'
   console.log(
-    `${chalk.gray(chalk.bold(path.basename(filePath)))} min:${minSize} / gzip:${gzippedSize} / brotli:${compressedSize}`
+    `${chalk.gray(
+      chalk.bold(path.basename(filePath))
+    )} size:${fileSize} / gzip:${gzippedSize} / brotli:${compressedSize}`
   )
 }
 
 async function outputCjsIndex(config: TsrvConfig, rollupOptionsArray: RollupOptions[]) {
-  const [cjsDev, cjsProd] = rollupOptionsArray
+  const [cjsProduction, cjsDevelopment] = rollupOptionsArray
     .filter(i => (i.output as OutputOptions).format === 'cjs')
     .map(i => path.relative(config.distDir, (i.output as OutputOptions).file)) as [string, string]
 
-  if (cjsDev && cjsProd) {
+  if (cjsProduction && cjsDevelopment) {
     await fs.outputFile(
       config.resolve('dist/index.js'),
       `'use strict'
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./${cjsDev}')
+  module.exports = require('./${cjsProduction}')
 } else {
-  module.exports = require('./${cjsProd}')
+  module.exports = require('./${cjsDevelopment}')
 }`,
       'utf8'
     )
@@ -52,21 +55,19 @@ async function build(rollupOptions: RollupOptions) {
 export async function execRollup(config: TsrvConfig) {
   try {
     process.env.ROLLUP_WATCH = 'false'
-    const rollupOptionsArray: RollupOptions[] = config.formats.reduce((prev, format, index) => {
-      prev.push(createRollupConfig({ format: format, isProd: false, outputNum: prev.length }, config))
-      if (format === 'cjs') {
-        prev.push(createRollupConfig({ format: format, isProd: true, outputNum: prev.length }, config))
-      }
-      return prev
-    }, [] as RollupOptions[])
-    debug(rollupOptionsArray)
+    await fs.remove(config.distDir)
+    const rollupOptionsArray: RollupOptions[] = [
+      createRollupConfig({ format: 'esm', isProd: true, isFirst: true }, config),
+      createRollupConfig({ format: 'cjs', isProd: true, isFirst: false }, config),
+      createRollupConfig({ format: 'cjs', isProd: false, isFirst: false }, config)
+    ]
     for (const rollupOptions of rollupOptionsArray) {
       await build(rollupOptions)
       checkFileSize((rollupOptions.output as OutputOptions).file)
     }
     await outputCjsIndex(config, rollupOptionsArray)
 
-    // await buildTypes(config)
+    await buildTypes(config)
   } catch (error) {
     throw error
   }
@@ -74,25 +75,31 @@ export async function execRollup(config: TsrvConfig) {
 
 export async function watchRollup(config: TsrvConfig) {
   process.env.ROLLUP_WATCH = 'true'
-  const rollupOptionsArray: RollupOptions[] = config.formats.reduce((prev, format, index) => {
-    prev.push({
-      ...createRollupConfig({ format: format, isProd: false, outputNum: prev.length }, config),
+  await fs.remove(config.distDir)
+  const rollupOptionsArray: RollupOptions[] = [
+    {
+      ...createRollupConfig({ format: 'esm', isProd: false, isFirst: true }, config),
       watch: {
         include: ['src/**/*'],
         exclude: ['node_modules/**']
       }
-    })
-    if (format === 'cjs') {
-      prev.push({
-        ...createRollupConfig({ format: format, isProd: true, outputNum: prev.length }, config),
-        watch: {
-          include: ['src/**/*'],
-          exclude: ['node_modules/**']
-        }
-      })
+    },
+    {
+      ...createRollupConfig({ format: 'cjs', isProd: true, isFirst: false }, config),
+      watch: {
+        include: ['src/**/*'],
+        exclude: ['node_modules/**']
+      }
+    },
+    {
+      ...createRollupConfig({ format: 'cjs', isProd: false, isFirst: false }, config),
+      watch: {
+        include: ['src/**/*'],
+        exclude: ['node_modules/**']
+      }
     }
-    return prev
-  }, [] as RollupOptions[])
+  ]
+
   debug(rollupOptionsArray)
   watch(rollupOptionsArray).on('event', async event => {
     if (event.code === 'START') {
@@ -109,6 +116,7 @@ export async function watchRollup(config: TsrvConfig) {
     }
     if (event.code === 'END') {
       await outputCjsIndex(config, rollupOptionsArray)
+      await buildTypes(config)
       console.log(chalk.bold.green('Compiled successfully'))
       console.log(`${chalk.dim('Watching for changes')}`)
     }

@@ -7,11 +7,10 @@ import { Alias } from '@rollup/plugin-alias'
 
 const debug = createDebug('tsrv:config')
 
-export type FormatType = 'esm' | 'cjs' | 'umd'
+export type FormatType = 'esm' | 'cjs'
 
 export type TsrvUserConfig = {
   input: string
-  formats: FormatType[]
   srcDir: string
   distDir: string
   plugins: any[]
@@ -26,7 +25,6 @@ export type TsrvConfig = {
   alias: Alias[] | { [find: string]: string }
   name: string
   input: string
-  formats: FormatType[]
   tsconfigPath: string
   tsconfigOptions: TsconfigOptions
   plugins: any[]
@@ -58,7 +56,6 @@ export async function loadConfig(_configPath: string = './tsrv.config.js') {
   const userConfig: TsrvUserConfig = Object.assign(
     {
       input: 'src/index.ts',
-      formats: ['cjs', 'esm'],
       plugins: [],
       srcDir: 'src',
       distDir: 'dist',
@@ -76,7 +73,6 @@ export async function loadConfig(_configPath: string = './tsrv.config.js') {
     alias: {},
     name: packageJSON.name,
     input: rootResolve(userConfig.input),
-    formats: userConfig.formats,
     tsconfigPath,
     tsconfigOptions,
     plugins: [],

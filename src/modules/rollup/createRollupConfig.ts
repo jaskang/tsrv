@@ -14,35 +14,38 @@ import { esbuildPlugin } from './plugins/esbuild'
 import { FormatType, TsrvConfig } from '../../config'
 import { packageName } from '../../utils'
 import vueJsxPlugin from './plugins/jsx'
+import path from 'path'
 
 export const supportedExts = ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
 
 type CreateRollupConfigOptionType = {
   format: FormatType
   isProd: boolean
-  outputNum: number
+  isFirst: boolean
 }
 
 export function createRollupConfig(
-  { format, isProd, outputNum }: CreateRollupConfigOptionType,
+  { format, isProd, isFirst }: CreateRollupConfigOptionType,
   config: TsrvConfig
 ): RollupOptions {
   return {
     input: config.input,
     output: {
-      file: `${config.distDir}/${packageName(config.name)}.${format}${isProd ? '.prod' : ''}.js`,
+      file: `${config.distDir}/${packageName(config.name)}.${format}${
+        format === 'cjs' ? (isProd ? '.production' : '.development') : ''
+      }.js`,
       format: format,
       name: packageName(config.name),
       sourcemap: true,
       exports: 'named',
-      banner: `/* ${config.packageJSON.name} version ${config.packageJSON.version} */`,
-      compact: isProd
+      banner: `/* ${config.packageJSON.name} version ${config.packageJSON.version}\n*/`
     },
     external: [
       ...Object.keys(config.packageJSON.dependencies || {}),
       ...Object.keys(config.packageJSON.peerDependencies || {}),
-      ...['/@babel/runtime/']
-    ],
+      ...['/@babel/runtime/'],
+      !isFirst && /\.(scss|sass|less|css)$/
+    ].filter(Boolean),
     treeshake: {
       moduleSideEffects: false
     },
@@ -62,7 +65,8 @@ export function createRollupConfig(
         preferBuiltins: false
       }),
       postcssPlugin({
-        extract: true,
+        inject: false,
+        extract: isFirst && path.join(config.distDir, `${packageName(config.name)}.css`),
         ...config.postcssOptions,
         plugins: Array.isArray(config.postcssOptions.plugins)
           ? [...config.postcssOptions.plugins, autoprefixer()]
@@ -86,7 +90,7 @@ export function createRollupConfig(
         exclude: [/node_modules/]
       }),
       vuePlugin(),
-      outputNum <= 0 &&
+      isFirst &&
         typescriptPlugin({
           tsconfigOverride: {
             exclude: [
@@ -106,7 +110,7 @@ export function createRollupConfig(
               sourceMap: false,
               declaration: true,
               module: 'esnext',
-              declarationDir: '__temp__',
+              declarationDir: path.join(config.distDir, '__temp__'),
               jsx: 'preserve'
             }
           },
