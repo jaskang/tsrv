@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import { default as createDebug } from 'debug'
 import { loadTsconfig, TsconfigOptions } from '../modules/tsconfig'
 import { PostCSSPluginConf } from 'rollup-plugin-postcss'
+import { Alias } from '@rollup/plugin-alias'
 
 const debug = createDebug('tsrv:config')
 
@@ -19,8 +20,10 @@ export type TsrvUserConfig = {
 }
 
 type EnvType = 'development' | 'production' | 'test'
+
 export type TsrvConfig = {
   env: EnvType
+  alias: Alias[] | { [find: string]: string }
   name: string
   input: string
   formats: FormatType[]
@@ -70,6 +73,7 @@ export async function loadConfig(_configPath: string = './tsrv.config.js') {
     : 'development'
   const config: TsrvConfig = {
     env: env,
+    alias: {},
     name: packageJSON.name,
     input: rootResolve(userConfig.input),
     formats: userConfig.formats,

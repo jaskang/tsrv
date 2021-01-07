@@ -42,7 +42,7 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
       __DEV__: true,
       __TEST__: true,
       'ts-jest': {
-        babelConfig: { presets: [[require.resolve('tsrv/dist/modules/babelPresetElenext'), {}]] }
+        babelConfig: { presets: [[require.resolve('./jestBabelPreset'), {}]] }
       }
     }
     // watchPlugins: [require.resolve('jest-watch-typeahead/filename'), require.resolve('jest-watch-typeahead/testname')]

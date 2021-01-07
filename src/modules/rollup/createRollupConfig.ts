@@ -1,18 +1,19 @@
-import path from 'path'
 import { RollupOptions } from 'rollup'
-import commonjs from '@rollup/plugin-commonjs'
-import json from '@rollup/plugin-json'
-import replace from '@rollup/plugin-replace'
-import resolve from '@rollup/plugin-node-resolve'
-import dynamicImport from '@rollup/plugin-dynamic-import-vars'
-import babel from '@rollup/plugin-babel'
-import vue from 'rollup-plugin-vue'
-import postcss from 'rollup-plugin-postcss'
-import typescript from 'rollup-plugin-typescript2'
+import aliasPlugin from '@rollup/plugin-alias'
+import commonjsPlugin from '@rollup/plugin-commonjs'
+import replacePlugin from '@rollup/plugin-replace'
+import dynamicImportVarsPlugin from '@rollup/plugin-dynamic-import-vars'
+import resolvePlugin from '@rollup/plugin-node-resolve'
+import jsonPlugin from '@rollup/plugin-json'
+import vuePlugin from 'rollup-plugin-vue'
+import postcssPlugin from 'rollup-plugin-postcss'
+import typescriptPlugin from 'rollup-plugin-typescript2'
 import autoprefixer from 'autoprefixer'
+import { esbuildPlugin } from './plugins/esbuild'
 
 import { FormatType, TsrvConfig } from '../../config'
 import { packageName } from '../../utils'
+import vueJsxPlugin from './plugins/jsx'
 
 export const supportedExts = ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
 
@@ -55,73 +56,65 @@ export function createRollupConfig(
       warn(warning)
     },
     plugins: [
-      replace({
-        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
-      }),
-      vue(),
-      resolve({
-        mainFields: ['module', 'jsnext', 'jsnext:main', 'browser', 'main'],
+      aliasPlugin({ entries: config.alias }),
+      resolvePlugin({
         extensions: supportedExts,
         preferBuiltins: false
       }),
-      commonjs({
-        extensions: ['.js', '.cjs'],
-        include: format === 'umd' ? /\/node_modules\// : /\/regenerator-runtime\//
-      }),
-      dynamicImport({
-        warnOnError: true,
-        include: [/\.js$/],
-        exclude: [/node_modules/]
-      }),
-      json({
-        namedExports: false
-      }),
-      postcss({
+      postcssPlugin({
         extract: true,
         ...config.postcssOptions,
         plugins: Array.isArray(config.postcssOptions.plugins)
           ? [...config.postcssOptions.plugins, autoprefixer()]
           : [autoprefixer()]
       }),
-      typescript({
-        tsconfig: config.tsconfigPath,
-        tsconfigDefaults: {
-          exclude: [
-            // all TS test files, regardless whether co-located or in test/ etc
-            '**/__tests__',
-            '**/*.spec.ts',
-            '**/*.test.ts',
-            '**/*.spec.tsx',
-            '**/*.test.tsx',
-            // TS defaults below
-            'node_modules',
-            'bower_components',
-            'jspm_packages',
-            config.distDir,
-            ...config.tsconfigOptions.exclude
-          ],
-          compilerOptions: {
-            sourceMap: true
-          }
-        },
-        tsconfigOverride: {
-          compilerOptions: {
-            target: 'esnext',
-            ...(outputNum > 0
-              ? { declaration: false, declarationMap: false }
-              : { declaration: true, declarationMap: false, declarationDir: path.join(config.distDir, '__types__') })
-          }
-        },
-        check: outputNum === 0,
-        useTsconfigDeclarationDir: true
+      jsonPlugin({
+        preferConst: true,
+        namedExports: true
       }),
-      babel({
-        exclude: /node_modules/,
-        extensions: supportedExts,
-        babelHelpers: 'bundled',
-        babelrc: false,
-        presets: [[require.resolve('tsrv/dist/modules/babelPresetElenext'), {}]]
-      })
-    ]
+      commonjsPlugin({
+        include: [/node_modules/],
+        extensions: ['.js', '.cjs']
+      }),
+      replacePlugin({
+        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+        'process.env.': `({}).`
+      }),
+      dynamicImportVarsPlugin({
+        warnOnError: true,
+        include: [/\.js$/],
+        exclude: [/node_modules/]
+      }),
+      vuePlugin(),
+      outputNum <= 0 &&
+        typescriptPlugin({
+          tsconfigOverride: {
+            exclude: [
+              // all TS test files, regardless whether co-located or in test/ etc
+              '**/*.spec.ts',
+              '**/*.test.ts',
+              '**/*.spec.tsx',
+              '**/*.test.tsx',
+              // TS defaults below
+              'node_modules',
+              'bower_components',
+              'jspm_packages',
+              'dist'
+            ],
+            compilerOptions: {
+              target: 'esnext',
+              sourceMap: false,
+              declaration: true,
+              module: 'esnext',
+              declarationDir: '__temp__',
+              jsx: 'preserve'
+            }
+          },
+          check: true,
+          useTsconfigDeclarationDir: true
+        }),
+      vueJsxPlugin(),
+      esbuildPlugin({})
+    ].filter(Boolean)
   }
 }
