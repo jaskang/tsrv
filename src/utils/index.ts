@@ -70,5 +70,11 @@ export const packageName = (name: string) =>
       .toLowerCase()
       .replace(/((^[^a-zA-Z]+)|[^\w.-])|([^a-zA-Z0-9]+$)/g, '')
   )
-
+export const packageFullName = (name: string) =>
+  camelCase(
+    name
+      .replace(/\//, '-')
+      .toLowerCase()
+      .replace(/((^[^a-zA-Z]+)|[^\w.-])|([^a-zA-Z0-9]+$)/g, '')
+  )
 export const external = (id: string) => !id.startsWith('.') && !path.isAbsolute(id)

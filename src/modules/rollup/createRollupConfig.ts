@@ -44,6 +44,7 @@ export function createRollupConfig(
       ...Object.keys(config.packageJSON.dependencies || {}),
       ...Object.keys(config.packageJSON.peerDependencies || {}),
       ...['/@babel/runtime/'],
+      /^(vue)$/,
       !isFirst && /\.(scss|sass|less|css)$/
     ].filter(Boolean),
     treeshake: {
@@ -84,11 +85,11 @@ export function createRollupConfig(
         'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
         'process.env.': `({}).`
       }),
-      dynamicImportVarsPlugin({
-        warnOnError: true,
-        include: [/\.js$/],
-        exclude: [/node_modules/]
-      }),
+      // dynamicImportVarsPlugin({
+      //   warnOnError: true,
+      //   include: [/\.js$/],
+      //   exclude: [/node_modules/]
+      // }),
       vuePlugin(),
       isFirst &&
         typescriptPlugin({
