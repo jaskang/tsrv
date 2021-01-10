@@ -29,9 +29,9 @@ function checkFileSize(filePath) {
   )
 }
 
-async function renameEsmIndex({ distDir }) {
-  await fs.rename(path.join(distDir, `index.js`), path.join(distDir, `index.esm.js`))
-}
+// async function renameEsmIndex({ distDir }) {
+//   await fs.rename(path.join(distDir, `index.js`), path.join(distDir, `index.esm.js`))
+// }
 
 async function outputCjsIndex(config: TsrvConfig, rollupOptionsArray: RollupOptions[]) {
   const [cjsProduction, cjsDevelopment] = rollupOptionsArray
@@ -68,9 +68,9 @@ export async function execRollup(config: TsrvConfig) {
     ]
     for (const rollupOptions of rollupOptionsArray) {
       await build(rollupOptions)
-      checkFileSize((rollupOptions.output as OutputOptions).file || `${config.distDir}/index.js`)
+      checkFileSize((rollupOptions.output as OutputOptions).file)
     }
-    await renameEsmIndex(config)
+    // await renameEsmIndex(config)
     await outputCjsIndex(config, rollupOptionsArray)
     await buildTypes(config)
   } catch (error) {
@@ -120,7 +120,7 @@ export async function watchRollup(config: TsrvConfig) {
       console.log('')
     }
     if (event.code === 'END') {
-      await renameEsmIndex(config)
+      // await renameEsmIndex(config)
       await outputCjsIndex(config, rollupOptionsArray)
       await buildTypes(config)
       console.log(chalk.bold.green('Compiled successfully'))

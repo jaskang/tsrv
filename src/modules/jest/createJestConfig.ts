@@ -31,6 +31,7 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
       '^.+\\.(ts|tsx)$': require.resolve('ts-jest'),
       ...jestUserConfig.transform
     },
+    // transformIgnorePatterns: ['/node_modules/', '\\.pnp\\.[^\\/]+$', '/node_modules/(?!vue)'],
     moduleNameMapper: {
       ...pathsToModuleNameMapper(config.tsconfigOptions.compilerOptions.paths || {}, {
         prefix: '<rootDir>/'

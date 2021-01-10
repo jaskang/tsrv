@@ -1,11 +1,10 @@
-import fs from 'fs-extra'
 import { RollupOptions } from 'rollup'
 import aliasPlugin from '@rollup/plugin-alias'
 import commonjsPlugin from '@rollup/plugin-commonjs'
 import replacePlugin from '@rollup/plugin-replace'
 import resolvePlugin from '@rollup/plugin-node-resolve'
 import jsonPlugin from '@rollup/plugin-json'
-import typescriptPlugin from '@rollup/plugin-typescript'
+import typescript2Plugin from 'rollup-plugin-typescript2'
 import vuePlugin from 'rollup-plugin-vue'
 import postcssPlugin from 'rollup-plugin-postcss'
 import autoprefixer from 'autoprefixer'
@@ -33,9 +32,8 @@ export function createRollupConfig(
     output: {
       file:
         format === 'cjs'
-          ? `${config.distDir}/${packageName(config.name)}.${format}${isProd ? '.production' : '.development'}.js`
-          : undefined,
-      dir: format === 'esm' ? config.distDir : undefined,
+          ? `${config.distDir}/${packageName(config.name)}${isProd ? '.production' : '.development'}.js`
+          : `${config.distDir}/index.${format}.js`,
       format: format,
       name: packageName(config.name),
       sourcemap: true,
@@ -96,54 +94,33 @@ export function createRollupConfig(
       }),
       vuePlugin(),
       isFirst &&
-        typescriptPlugin({
-          exclude: [
-            // all TS test files, regardless whether co-located or in test/ etc
-            '**/*.spec.ts',
-            '**/*.test.ts',
-            '**/*.spec.tsx',
-            '**/*.test.tsx',
-            // TS defaults below
-            'node_modules',
-            'bower_components',
-            'jspm_packages'
-          ],
-          target: 'esnext',
-          rootDir: config.srcDir,
-          sourceMap: false,
-          declaration: true,
-          declarationMap: false,
-          module: 'esnext',
-          declarationDir: path.join(config.distDir, '__temp__'),
-          jsx: 'preserve'
+        typescript2Plugin({
+          tsconfigOverride: {
+            exclude: [
+              // all TS test files, regardless whether co-located or in test/ etc
+              '**/*.spec.ts',
+              '**/*.test.ts',
+              '**/*.spec.tsx',
+              '**/*.test.tsx',
+              // TS defaults below
+              'node_modules',
+              'bower_components',
+              'jspm_packages',
+              'dist'
+            ],
+            compilerOptions: {
+              rootDir: config.srcDir,
+              target: 'esnext',
+              sourceMap: false,
+              declaration: true,
+              module: 'esnext',
+              declarationDir: path.join(config.distDir, '__temp__'),
+              jsx: 'preserve'
+            }
+          },
+          check: true,
+          useTsconfigDeclarationDir: true
         }),
-      // typescriptPlugin({
-      //   tsconfigOverride: {
-      //     exclude: [
-      //       // all TS test files, regardless whether co-located or in test/ etc
-      //       '**/*.spec.ts',
-      //       '**/*.test.ts',
-      //       '**/*.spec.tsx',
-      //       '**/*.test.tsx',
-      //       // TS defaults below
-      //       'node_modules',
-      //       'bower_components',
-      //       'jspm_packages',
-      //       'dist'
-      //     ],
-      //     compilerOptions: {
-      //       target: 'esnext',
-      //       sourceMap: false,
-      //       declaration: true,
-      //       module: 'esnext',
-      //       allowSyntheticDefaultImports: true,
-      //       declarationDir: path.join(config.distDir, '__temp__'),
-      //       jsx: 'preserve'
-      //     }
-      //   },
-      //   check: true,
-      //   useTsconfigDeclarationDir: true
-      // })
       vueJsxPlugin(),
       esbuildPlugin({})
     ].filter(Boolean)

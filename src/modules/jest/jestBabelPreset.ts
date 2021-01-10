@@ -11,8 +11,8 @@ export function createBabelConfig(env: 'development' | 'production' | 'test') {
         {
           targets: {
             node: 'current'
-          },
-          modules: 'commonjs'
+          }
+          // modules: 'commonjs'
         }
       ]
     ].filter(Boolean),
