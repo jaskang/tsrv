@@ -68,7 +68,7 @@ export async function execRollup(config: TsrvConfig) {
     ]
     for (const rollupOptions of rollupOptionsArray) {
       await build(rollupOptions)
-      checkFileSize((rollupOptions.output as OutputOptions).file ?? `${config.distDir}/index.js`)
+      checkFileSize((rollupOptions.output as OutputOptions).file || `${config.distDir}/index.js`)
     }
     await renameEsmIndex(config)
     await outputCjsIndex(config, rollupOptionsArray)
