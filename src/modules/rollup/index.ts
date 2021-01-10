@@ -7,7 +7,8 @@ import { OutputOptions, rollup, RollupOptions, watch } from 'rollup'
 import { TsrvConfig } from '../../config'
 import { createRollupConfig } from './createRollupConfig'
 import { default as createDebug } from 'debug'
-import { buildTypes } from '../definition'
+import { buildTypes } from './buildTypes'
+import { packageName } from '../../utils'
 
 const debug = createDebug('tsrv:rollup')
 
@@ -26,6 +27,10 @@ function checkFileSize(filePath) {
       chalk.bold(path.basename(filePath))
     )} size:${fileSize} / gzip:${gzippedSize} / brotli:${compressedSize}`
   )
+}
+
+async function renameEsmIndex({ distDir, name }) {
+  await fs.rename(path.join(distDir, `index.js`), path.join(distDir, `${packageName(name)}.esm.js`))
 }
 
 async function outputCjsIndex(config: TsrvConfig, rollupOptionsArray: RollupOptions[]) {
@@ -65,6 +70,7 @@ export async function execRollup(config: TsrvConfig) {
       await build(rollupOptions)
       checkFileSize((rollupOptions.output as OutputOptions).file)
     }
+    await renameEsmIndex(config)
     await outputCjsIndex(config, rollupOptionsArray)
 
     await buildTypes(config)
@@ -115,6 +121,7 @@ export async function watchRollup(config: TsrvConfig) {
       console.log('')
     }
     if (event.code === 'END') {
+      await renameEsmIndex(config)
       await outputCjsIndex(config, rollupOptionsArray)
       await buildTypes(config)
       console.log(chalk.bold.green('Compiled successfully'))

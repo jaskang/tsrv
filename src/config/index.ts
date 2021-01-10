@@ -10,7 +10,6 @@ const debug = createDebug('tsrv:config')
 export type FormatType = 'esm' | 'cjs'
 
 export type TsrvUserConfig = {
-  input: string
   srcDir: string
   distDir: string
   plugins: any[]
@@ -55,7 +54,6 @@ export async function loadConfig(_configPath: string = './tsrv.config.js') {
 
   const userConfig: TsrvUserConfig = Object.assign(
     {
-      input: 'src/index.ts',
       plugins: [],
       srcDir: 'src',
       distDir: 'dist',
@@ -72,7 +70,7 @@ export async function loadConfig(_configPath: string = './tsrv.config.js') {
     env: env,
     alias: {},
     name: packageJSON.name,
-    input: rootResolve(userConfig.input),
+    input: rootResolve(userConfig.srcDir, 'index.ts'),
     tsconfigPath,
     tsconfigOptions,
     plugins: [],

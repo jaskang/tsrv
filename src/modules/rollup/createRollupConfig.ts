@@ -1,14 +1,13 @@
+import fs from 'fs-extra'
 import { RollupOptions } from 'rollup'
 import aliasPlugin from '@rollup/plugin-alias'
 import commonjsPlugin from '@rollup/plugin-commonjs'
 import replacePlugin from '@rollup/plugin-replace'
-import dynamicImportVarsPlugin from '@rollup/plugin-dynamic-import-vars'
 import resolvePlugin from '@rollup/plugin-node-resolve'
 import jsonPlugin from '@rollup/plugin-json'
-import tsPlugin from '@rollup/plugin-typescript'
+import typescriptPlugin from '@rollup/plugin-typescript'
 import vuePlugin from 'rollup-plugin-vue'
 import postcssPlugin from 'rollup-plugin-postcss'
-import typescriptPlugin from 'rollup-plugin-typescript2'
 import autoprefixer from 'autoprefixer'
 import { esbuildPlugin } from './plugins/esbuild'
 
@@ -32,9 +31,11 @@ export function createRollupConfig(
   return {
     input: config.input,
     output: {
-      file: `${config.distDir}/${packageName(config.name)}.${format}${
-        format === 'cjs' ? (isProd ? '.production' : '.development') : ''
-      }.js`,
+      file:
+        format === 'cjs'
+          ? `${config.distDir}/${packageName(config.name)}.${format}${isProd ? '.production' : '.development'}.js`
+          : undefined,
+      dir: format === 'esm' ? config.distDir : undefined,
       format: format,
       name: packageName(config.name),
       sourcemap: true,
@@ -86,14 +87,9 @@ export function createRollupConfig(
         'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
         'process.env.': `({}).`
       }),
-      // dynamicImportVarsPlugin({
-      //   warnOnError: true,
-      //   include: [/\.js$/],
-      //   exclude: [/node_modules/]
-      // }),
       vuePlugin(),
       isFirst &&
-        tsPlugin({
+        typescriptPlugin({
           exclude: [
             // all TS test files, regardless whether co-located or in test/ etc
             '**/*.spec.ts',
@@ -109,8 +105,8 @@ export function createRollupConfig(
           target: 'esnext',
           sourceMap: false,
           declaration: true,
+          emitDeclarationOnly: true,
           module: 'esnext',
-          allowSyntheticDefaultImports: true,
           declarationDir: path.join(config.distDir, '__temp__'),
           jsx: 'preserve'
         }),
