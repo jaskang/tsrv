@@ -5,6 +5,7 @@ import replacePlugin from '@rollup/plugin-replace'
 import dynamicImportVarsPlugin from '@rollup/plugin-dynamic-import-vars'
 import resolvePlugin from '@rollup/plugin-node-resolve'
 import jsonPlugin from '@rollup/plugin-json'
+import tsPlugin from '@rollup/plugin-typescript'
 import vuePlugin from 'rollup-plugin-vue'
 import postcssPlugin from 'rollup-plugin-postcss'
 import typescriptPlugin from 'rollup-plugin-typescript2'
@@ -92,33 +93,54 @@ export function createRollupConfig(
       // }),
       vuePlugin(),
       isFirst &&
-        typescriptPlugin({
-          tsconfigOverride: {
-            exclude: [
-              // all TS test files, regardless whether co-located or in test/ etc
-              '**/*.spec.ts',
-              '**/*.test.ts',
-              '**/*.spec.tsx',
-              '**/*.test.tsx',
-              // TS defaults below
-              'node_modules',
-              'bower_components',
-              'jspm_packages',
-              'dist'
-            ],
-            compilerOptions: {
-              target: 'esnext',
-              sourceMap: false,
-              declaration: true,
-              module: 'esnext',
-              allowSyntheticDefaultImports: true,
-              declarationDir: path.join(config.distDir, '__temp__'),
-              jsx: 'preserve'
-            }
-          },
-          check: true,
-          useTsconfigDeclarationDir: true
+        tsPlugin({
+          exclude: [
+            // all TS test files, regardless whether co-located or in test/ etc
+            '**/*.spec.ts',
+            '**/*.test.ts',
+            '**/*.spec.tsx',
+            '**/*.test.tsx',
+            // TS defaults below
+            'node_modules',
+            'bower_components',
+            'jspm_packages',
+            'dist'
+          ],
+          target: 'esnext',
+          sourceMap: false,
+          declaration: true,
+          module: 'esnext',
+          allowSyntheticDefaultImports: true,
+          declarationDir: path.join(config.distDir, '__temp__'),
+          jsx: 'preserve'
         }),
+      // typescriptPlugin({
+      //   tsconfigOverride: {
+      //     exclude: [
+      //       // all TS test files, regardless whether co-located or in test/ etc
+      //       '**/*.spec.ts',
+      //       '**/*.test.ts',
+      //       '**/*.spec.tsx',
+      //       '**/*.test.tsx',
+      //       // TS defaults below
+      //       'node_modules',
+      //       'bower_components',
+      //       'jspm_packages',
+      //       'dist'
+      //     ],
+      //     compilerOptions: {
+      //       target: 'esnext',
+      //       sourceMap: false,
+      //       declaration: true,
+      //       module: 'esnext',
+      //       allowSyntheticDefaultImports: true,
+      //       declarationDir: path.join(config.distDir, '__temp__'),
+      //       jsx: 'preserve'
+      //     }
+      //   },
+      //   check: true,
+      //   useTsconfigDeclarationDir: true
+      // })
       vueJsxPlugin(),
       esbuildPlugin({})
     ].filter(Boolean)
