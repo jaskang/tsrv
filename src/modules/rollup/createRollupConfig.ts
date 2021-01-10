@@ -50,7 +50,7 @@ export function createRollupConfig(
     treeshake: {
       moduleSideEffects: false
     },
-
+    preserveSymlinks: true,
     onwarn(warning, warn) {
       // skip certain warnings
       if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
@@ -111,6 +111,7 @@ export function createRollupConfig(
               sourceMap: false,
               declaration: true,
               module: 'esnext',
+              allowSyntheticDefaultImports: true,
               declarationDir: path.join(config.distDir, '__temp__'),
               jsx: 'preserve'
             }
