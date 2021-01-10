@@ -54,6 +54,13 @@ export function createRollupConfig(
     },
     preserveSymlinks: true,
     onwarn(warning, warn) {
+      // skip sourceMap warnings
+      if (
+        warning.message ===
+        `@rollup/plugin-typescript: Typescript 'sourceMap' compiler option must be set to generate source maps.`
+      ) {
+        return
+      }
       // skip certain warnings
       if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
       // throw on others
@@ -99,13 +106,13 @@ export function createRollupConfig(
             // TS defaults below
             'node_modules',
             'bower_components',
-            'jspm_packages',
-            'dist'
+            'jspm_packages'
           ],
           target: 'esnext',
+          rootDir: config.srcDir,
           sourceMap: false,
           declaration: true,
-          emitDeclarationOnly: true,
+          declarationMap: false,
           module: 'esnext',
           declarationDir: path.join(config.distDir, '__temp__'),
           jsx: 'preserve'
