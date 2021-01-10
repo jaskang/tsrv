@@ -29,8 +29,8 @@ function checkFileSize(filePath) {
   )
 }
 
-async function renameEsmIndex({ distDir, name }) {
-  await fs.rename(path.join(distDir, `index.js`), path.join(distDir, `${packageName(name)}.esm.js`))
+async function renameEsmIndex({ distDir }) {
+  await fs.rename(path.join(distDir, `index.js`), path.join(distDir, `index.esm.js`))
 }
 
 async function outputCjsIndex(config: TsrvConfig, rollupOptionsArray: RollupOptions[]) {
@@ -68,11 +68,10 @@ export async function execRollup(config: TsrvConfig) {
     ]
     for (const rollupOptions of rollupOptionsArray) {
       await build(rollupOptions)
-      checkFileSize((rollupOptions.output as OutputOptions).file)
+      checkFileSize((rollupOptions.output as OutputOptions).file ?? `${config.distDir}/index.js`)
     }
     await renameEsmIndex(config)
     await outputCjsIndex(config, rollupOptionsArray)
-
     await buildTypes(config)
   } catch (error) {
     throw error
