@@ -43,6 +43,20 @@ export async function createJestConfig(config: TsrvConfig): Promise<JestConfigOp
       __DEV__: true,
       __TEST__: true,
       'ts-jest': {
+        tsconfig: {
+          ...config.tsconfigOptions.compilerOptions,
+          sourceMap: false,
+          target: 'esnext',
+          module: 'CommonJS',
+          jsx: 'preserve',
+          moduleResolution: 'node',
+          declaration: true,
+          noUnusedLocals: true,
+          resolveJsonModule: true,
+          esModuleInterop: true,
+          experimentalDecorators: true,
+          allowSyntheticDefaultImports: true
+        },
         babelConfig: { presets: [[require.resolve('./jestBabelPreset'), {}]] }
       }
     }
