@@ -90,7 +90,8 @@ export function createRollupConfig(
       }),
       replacePlugin({
         'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
-        'process.env.': `({}).`
+        'process.env.': `({}).`,
+        preventAssignment: true
       }),
       vuePlugin(),
       isFirst &&
