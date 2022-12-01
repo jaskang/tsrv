@@ -1,3 +1,7 @@
-export { execRollup, watchRollup } from './modules/rollup'
-export { execJest } from './modules/jest'
-export { TsrvUserConfig } from './config'
+import type { BuildConfig } from './build';
+import { getRollupOptions } from './builder';
+
+export function defineConfig(fn: () => BuildConfig): BuildConfig {
+  const a = getRollupOptions;
+  return fn();
+}
