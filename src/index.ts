@@ -1,7 +1,5 @@
-import type { BuildConfig } from './build';
-import { getRollupOptions } from './builder';
-
-export function defineConfig(fn: () => BuildConfig): BuildConfig {
-  const a = getRollupOptions;
-  return fn();
+import type { BuildConfig } from './builder/config'
+export { bump } from './publisher'
+export function defineConfig(config: BuildConfig): BuildConfig {
+  return config
 }
